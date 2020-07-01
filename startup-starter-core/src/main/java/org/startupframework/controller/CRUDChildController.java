@@ -22,15 +22,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.startupframework.dto.ChildDataTransferObject;
+import org.startupframework.dto.DataTransferObjectChild;
 
 /**
- * RestController for DataTransferObjects and inherited.
+ * Controller for DataTransferObjects and inherited.
  * 
  * GET (get a single item or a collection)
  * 
@@ -44,27 +44,25 @@ import org.startupframework.dto.ChildDataTransferObject;
  */
 
 @CrossOrigin(origins = "*")
-public interface CRUDChildController<DTO extends ChildDataTransferObject> {
+public interface CRUDChildController<DTO extends DataTransferObjectChild> {
 
-	static final String URL_BASE = "/";
-
-	@GetMapping(URL_BASE)
+	@GetMapping()
 	@ResponseBody
 	ResponseEntity<List<DTO>> getAllItems(@PathVariable("parentId") String parentId);
 
-	@GetMapping(value = URL_BASE + "{childId}")
+	@GetMapping("/{childId}")
 	@ResponseBody
 	ResponseEntity<DTO> getItem(@PathVariable("parentId") String parentId, @PathVariable("childId") String childId);
 
-	@PostMapping(value = URL_BASE)
+	@PostMapping()
 	@ResponseBody
 	ResponseEntity<DTO> createItem(@PathVariable("parentId") String parentId, @RequestBody DTO item);
 
-	@PutMapping(value = URL_BASE)
+	@PatchMapping()
 	@ResponseBody
 	ResponseEntity<DTO> updateItem(@PathVariable("parentId") String parentId, @RequestBody DTO item);
 	
-	@DeleteMapping(value = URL_BASE + "{childId}")
+	@DeleteMapping("/{childId}")
 	@ResponseBody
 	ResponseEntity<DTO> deleteItem(@PathVariable("parentId") String parentId, @PathVariable("childId") String childId);
 }

@@ -14,45 +14,34 @@
  * limitations under the License.
  */
 
-package org.startupframework.data.service;
+package org.startupframework.dto;
 
 import java.util.Date;
-import java.util.List;
 
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.startupframework.dto.DataTransferObjectBase;
 import org.startupframework.entity.Entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 /**
- * Service with Entity.
  *
  * @author Arq. Jesús Israel Anaya Salazar
  */
-public interface EntityService<E extends Entity> {
+@Data
+@EqualsAndHashCode(callSuper = true)
+public class EntityDTO extends DataTransferObjectBase implements Entity {
 
-	E save(E entity);
+	public static final String DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
-	E findById(String id);
+	@JsonFormat(pattern = DATE_PATTERN)
+	private Date createdDate;
 
-	boolean existsById(String id);
+	@JsonFormat(pattern = DATE_PATTERN)
+	private Date modifiedDate;
 
-	List<E> findAll();
-	
-	List<E> findAllById(Iterable<String> ids);
-
-	Page<E> findAll(Pageable pageable);
-
-	Page<E> findAll(Example<E> example, Pageable pageable);
-
-	long count();
-
-	void deleteById(String id);
-
-	void delete(E entity);
-
-	List<E> findByActive(boolean value);
-
-	List<E> findByCreatedDateGreaterThan(Date date);
+	private Boolean active = true;
 
 }

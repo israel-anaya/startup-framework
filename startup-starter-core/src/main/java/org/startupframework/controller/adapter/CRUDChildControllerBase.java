@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.startupframework.controller;
+package org.startupframework.controller.adapter;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -25,13 +25,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.startupframework.dto.DataTransferObject;
-import org.startupframework.service.DataTransferObjectService;
+import org.startupframework.adapter.CRUDChildAdapter;
+import org.startupframework.controller.CRUDChildController;
+import org.startupframework.controller.StartupEndpoint;
+import org.startupframework.dto.DataTransferObjectChild;
 
 import lombok.Getter;
 
 /**
- * RestController for DataTransferObjects and inherited.
+ * Base Child Controller with Adapter.
  * 
  * GET (get a single item or a collection)
  * 
@@ -43,30 +45,30 @@ import lombok.Getter;
  * 
  * @author Arq. Jesús Israel Anaya Salazar
  */
-public abstract class DataTransferObjectServiceController<DTO extends DataTransferObject, S extends DataTransferObjectService<DTO>>
-		extends StartupEndpoint implements CRUDController<DTO> {
+public abstract class CRUDChildControllerBase<DTO extends DataTransferObjectChild, AD extends CRUDChildAdapter<DTO>>
+		extends StartupEndpoint implements CRUDChildController<DTO> {
 
-	static final String ASSERT_SERVICE = "Should implements service for %s";
+	static final String ASSERT_SERVICE = "Should implements adapter for %s";
 
 	@Getter
-	final S service;
+	final AD adapter;
 
-	protected DataTransferObjectServiceController(S service) {
-		assert service != null : String.format(ASSERT_SERVICE, this.getClass().getName());
-		this.service = service;
+	protected CRUDChildControllerBase(AD adapter) {
+		assert adapter != null : String.format(ASSERT_SERVICE, this.getClass().getName());
+		this.adapter = adapter;
 	}
-
+	
 	protected <T> void updateProperty(Supplier<T> source, Consumer<T> target) {
 		T value = source.get();
 		if (value != null)
 			target.accept(value);
 	}
-
+	
 	abstract protected void updateProperties(DTO source, DTO target);
 
 	// -------------------Retrieve AllData----------------------
-	public @ResponseBody ResponseEntity<List<DTO>> getAllItems() {
-		List<DTO> data = service.findAll();
+	public @ResponseBody ResponseEntity<List<DTO>> getAllItems(@PathVariable("parentId") String parentId) {
+		List<DTO> data = adapter.findAll(parentId);
 
 		if (data.isEmpty()) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -76,25 +78,33 @@ public abstract class DataTransferObjectServiceController<DTO extends DataTransf
 	}
 
 	// -------------------Retrieve Single----------------------
-	public @ResponseBody ResponseEntity<DTO> getItem(@PathVariable("id") String id) {
-		DTO item = service.findById(id);
+	public @ResponseBody ResponseEntity<DTO> getItem(@PathVariable("parentId") String parentId,
+			@PathVariable("childId") String childId) {
+		DTO item = adapter.findById(parentId, childId);
 		return new ResponseEntity<>(item, HttpStatus.OK);
 	}
 
 	// -------------------Create a Item----------------------
-	public ResponseEntity<DTO> createItem(@RequestBody DTO item) {
-		DTO newItem = service.save(item);
+	public ResponseEntity<DTO> createItem(@PathVariable("parentId") String parentId, @RequestBody DTO item) {
+		DTO newItem = adapter.save(parentId, item.getChildId(), item);
 		return new ResponseEntity<>(newItem, HttpStatus.CREATED);
 	}
 
-	// ------------------- Update a Item----------------------
-	public ResponseEntity<DTO> updateItem(@RequestBody DTO item) {
-		DTO currentItem = null;
-		currentItem = service.findById(item.getId());
+	// ------------------- Update an Item----------------------
+	public ResponseEntity<DTO> updateItem(@PathVariable("parentId") String parentId, @RequestBody DTO item) {
+		DTO currentItem = adapter.findById(parentId, item.getChildId());
 
 		updateProperties(item, currentItem);
 
-		DTO updatedItem = service.save(currentItem);
+		DTO updatedItem = adapter.save(parentId, item.getChildId(), currentItem);
 		return new ResponseEntity<>(updatedItem, HttpStatus.OK);
+	}
+
+	// ------------------- Delete an Item----------------------
+	public @ResponseBody ResponseEntity<DTO> deleteItem(@PathVariable("parentId") String parentId,
+			@PathVariable("childId") String childId) {
+		DTO deleteItem = adapter.findById(parentId, childId);
+		adapter.deleteById(parentId, childId);
+		return new ResponseEntity<>(deleteItem, HttpStatus.OK);
 	}
 }

@@ -14,27 +14,24 @@
  * limitations under the License.
  */
 
-package org.startupframework.service;
+package org.startupframework.data.service;
 
 import java.util.List;
 
-import org.startupframework.dto.DataTransferObject;
+import org.startupframework.entity.Entity;
 
 /**
- * Service interface for DataTransferObject and inherited.
+ * Child Service with Entity.
  *
  * @author Arq. Jesús Israel Anaya Salazar
  */
-public interface DataTransferObjectService<DTO extends DataTransferObject> {
+public interface EntityServiceChild<E extends Entity> extends EntityService<E> {
+	
+	abstract E save(String parentId, String childId, E entity);
 
-	DTO save(DTO dto);
+	abstract E findById(String parentId, String childId);
 
-	DTO findById(String id);
+	abstract List<E> findAll(String parentId);
 
-	boolean existsById(String id);
-
-	List<DTO> findAll();
-
-	void deleteById(String id);
-
+	abstract void deleteById(String parentId, String childId);
 }

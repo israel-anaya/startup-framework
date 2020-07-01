@@ -14,15 +14,24 @@
  * limitations under the License.
  */
 
-package org.startupframework.data.entity;
+package org.startupframework.adapter;
 
-import org.startupframework.entity.Entity;
+import java.util.List;
+
+import org.startupframework.dto.DataTransferObjectChild;
 
 /**
-*
-* @author Arq. Jesús Israel Anaya Salazar
-*/
-@FunctionalInterface
-public interface OldNewPred<E extends Entity> extends java.util.function.BiPredicate<E, E> {
+ * Service interface for ChildAdapter.
+ *
+ * @author Arq. Jesús Israel Anaya Salazar
+ */
+public interface CRUDChildAdapter<DTO extends DataTransferObjectChild> {
 
+	DTO save(String parentId, String childId, DTO dto);
+
+	DTO findById(String parentId, String childId);
+
+	List<DTO> findAll(String parentId);
+
+	void deleteById(String parentId, String childId);
 }

@@ -14,25 +14,26 @@
  * limitations under the License.
  */
 
-package org.startupframework.service;
+package org.startupframework.data.entity.id;
 
+import java.util.UUID;
 
-import java.util.List;
-
-import org.startupframework.dto.DataTransferObject;
+import org.springframework.stereotype.Component;
 
 /**
- * JPA Repository for ChildEntityBase and inherited.
- *
- * @author Arq. Jesús Israel Anaya Salazar
- */
-public interface ChildDataTransferObjectService<DTO extends DataTransferObject> {
+*
+* @author Arq. Jesús Israel Anaya Salazar
+*/
+@Component
+public class IdPrefixStrategy implements IdStrategy {
 
-	abstract DTO save(String parentId, String childId, DTO dto);
+	@Override
+	public String generate(String value) {
+		return createId(value, UUID.randomUUID());
+	}
 
-	abstract DTO findById(String parentId, String childId);
+	private String createId(String value, UUID uuid) {
+		return value + "-" + uuid.toString();
+	}
 
-	abstract List<DTO> findAll(String parentId);
-
-	abstract void deleteById(String parentId, String childId);
 }

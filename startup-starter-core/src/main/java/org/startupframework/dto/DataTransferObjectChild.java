@@ -14,30 +14,15 @@
  * limitations under the License.
  */
 
-package org.startupframework.datasource;
-
-import java.util.List;
-
-import org.startupframework.dto.DataTransferObject;
+package org.startupframework.dto;
 
 /**
- * Service interface for DataSource.
  *
  * @author Arq. Jesús Israel Anaya Salazar
  */
-public interface DataSource<DTO extends DataTransferObject> {
+public interface DataTransferObjectChild extends DataTransferObject {
 
-	DTO save(DTO dto);
+	String getChildId();
 
-	DTO findById(String id);
-
-	boolean existsById(String id);
-
-	List<DTO> findAll();
-
-	List<DTO> findAllById(Iterable<String> ids);
-
-	long count();
-
-	void deleteById(String id);
+	void setChildId(String value);
 }

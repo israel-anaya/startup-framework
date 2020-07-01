@@ -14,15 +14,24 @@
  * limitations under the License.
  */
 
-package org.startupframework.dto;
+package org.startupframework.service;
+
+import java.util.List;
+
+import org.startupframework.entity.Identifiable;
 
 /**
+ * Child Service interface with DataTransferObject.
  *
  * @author Arq. Jesús Israel Anaya Salazar
  */
-public interface ChildDataTransferObject extends DataTransferObject {
+public interface CRUDServiceChild<DTO extends Identifiable<String>> {
 
-	String getChildId();
+	abstract DTO save(String parentId, String childId, DTO dto);
 
-	void setChildId(String value);
+	abstract DTO findById(String parentId, String childId);
+
+	abstract List<DTO> findAll(String parentId);
+
+	abstract void deleteById(String parentId, String childId);
 }

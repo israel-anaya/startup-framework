@@ -23,7 +23,7 @@
 
 	<groupId>org.startupframework</groupId>
 	<artifactId>startup-starter-parent</artifactId>
-	<version>1.0.1.RELEASE</version>
+	<version>1.0.2.RELEASE</version>
 	<packaging>pom</packaging>
 
 	<name>${project.groupId}:${project.artifactId}</name>
@@ -47,15 +47,15 @@
 	</developers>
 	
 	<scm>
-  		<connection>scm:git:git://github.com/israel-anaya/startup-starter-parent.git</connection>
-  		<developerConnection>scm:git:ssh://github.com:israel-anaya/startup-starter-parent.git</developerConnection>
-  		<url>https://github.com/israel-anaya/startup-starter-parent.git</url>
+  		<connection>scm:git:git://github.com/israel-anaya/startup-framework.git</connection>
+  		<developerConnection>scm:git:ssh://github.com:israel-anaya/startup-framework.git</developerConnection>
+  		<url>https://github.com/israel-anaya/startup-framework.git</url>
 	</scm>		
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.3.0.RELEASE</version>
+		<version>2.3.1.RELEASE</version>
 	</parent>
 
 	<properties>

@@ -14,34 +14,14 @@
  * limitations under the License.
  */
 
-package org.startupframework.dto;
-
-import java.util.Date;
-
-import org.startupframework.dto.DataTransferObjectBase;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+package org.startupframework.data.entity.id;
 
 /**
-*
-* @author Arq. Jesús Israel Anaya Salazar
-*/
-@Data
-@EqualsAndHashCode(callSuper = true)
-public class EntitySupportDTO extends DataTransferObjectBase {
+ *
+ * @author Arq. Jesús Israel Anaya Salazar
+ */
+public interface IdStrategy {
 
-	public static final String DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
-
-	@JsonFormat(pattern = DATE_PATTERN)
-	private Date createdDate;
-
-	@JsonFormat(pattern = DATE_PATTERN)
-	private Date modifiedDate;
-
-	private Boolean active = true;	
-
+	String generate(String value);
 
 }

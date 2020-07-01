@@ -16,7 +16,6 @@
 
 package org.startupframework.feign;
 
-
 import java.io.IOException;
 
 import org.springframework.beans.factory.ObjectFactory;
@@ -25,6 +24,7 @@ import org.springframework.cloud.openfeign.support.ResponseEntityDecoder;
 import org.springframework.cloud.openfeign.support.SpringDecoder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.startupframework.entity.ErrorInfo;
 import org.startupframework.exception.StartupException;
@@ -36,9 +36,9 @@ import feign.Response;
 import feign.codec.ErrorDecoder;
 
 /**
-*
-* @author Arq. Jesús Israel Anaya Salazar
-*/
+ *
+ * @author Arq. Jesús Israel Anaya Salazar
+ */
 public class StartupErrorDecoder implements ErrorDecoder {
 
 	ResponseEntityDecoder decoder;
@@ -56,15 +56,22 @@ public class StartupErrorDecoder implements ErrorDecoder {
 		if (response.status() >= HttpStatus.BAD_REQUEST.value()) {
 			ErrorInfo errorInfo;
 			try {
-				errorInfo = (ErrorInfo) decoder.decode(response, ErrorInfo.class);
-				return new StartupException(errorInfo.getErrorMessage());
+				try {
+					SpringErrorResponse springErrorResponse = (SpringErrorResponse) decoder.decode(response,
+							SpringErrorResponse.class);
+					return new StartupException(springErrorResponse.getMessage());
+
+				} catch (Exception e) {
+					errorInfo = (ErrorInfo) decoder.decode(response, ErrorInfo.class);
+					return new StartupException(errorInfo.getErrorMessage());
+
+				}
 
 			} catch (FeignException | IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
-			
 		}
 		return null;
 	}

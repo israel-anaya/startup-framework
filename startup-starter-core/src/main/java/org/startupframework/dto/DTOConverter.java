@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package org.startupframework.data.entity;
+package org.startupframework.dto;
 
-import org.startupframework.entity.Entity;
+import org.startupframework.dto.DataTransferObject;
 
 /**
 *
 * @author Arq. Jesús Israel Anaya Salazar
 */
-@FunctionalInterface
-public interface OldNewPred<E extends Entity> extends java.util.function.BiPredicate<E, E> {
+public interface DTOConverter<S extends DataTransferObject, T extends DataTransferObject> {
+
+	T toTarget(S source);
+
+	S toSource(T target);
 
 }

@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package org.startupframework.data.service;
+package org.startupframework.dto;
 
-import java.util.List;
+import org.startupframework.entity.Entity;
 
-import org.startupframework.data.entity.Entity;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
- * Service interface for PersistentObject and inherited.
  *
  * @author Arq. Jesús Israel Anaya Salazar
  */
-public interface ChildEntityService<E extends Entity> extends EntityService<E> {
-	
-	abstract E save(String parentId, String childId, E entity);
+@Data
+@EqualsAndHashCode(callSuper = true)
+@JsonIgnoreProperties({"id"})
+public class EntityChildDTO extends EntityDTO implements Entity, DataTransferObjectChild {
 
-	abstract E findById(String parentId, String childId);
+	private String childId;
 
-	abstract List<E> findAll(String parentId);
-
-	abstract void deleteById(String parentId, String childId);
 }

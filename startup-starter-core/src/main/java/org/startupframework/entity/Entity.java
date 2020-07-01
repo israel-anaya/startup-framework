@@ -14,22 +14,25 @@
  * limitations under the License.
  */
 
-package org.startupframework.data.entity;
+package org.startupframework.entity;
 
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import java.util.Date;
 
 /**
 *
 * @author Arq. Jesús Israel Anaya Salazar
 */
-@Documented
-@Target(TYPE)
-@Retention(RUNTIME)
-public @interface EntityPrefix {
-	String value();
+public interface Entity extends Identifiable<String> {
+
+	Date getCreatedDate();
+
+	void setCreatedDate(Date value);
+
+	Date getModifiedDate();
+
+	void setModifiedDate(Date value);
+
+	Boolean getActive();
+
+	void setActive(Boolean value);
 }

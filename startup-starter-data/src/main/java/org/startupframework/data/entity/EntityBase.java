@@ -18,11 +18,12 @@ package org.startupframework.data.entity;
 
 import java.util.Date;
 import java.util.Objects;
-import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+
+import org.startupframework.entity.Entity;
 
 import lombok.Data;
 
@@ -57,14 +58,6 @@ public abstract class EntityBase implements Entity {
 	public EntityBase() {
 	}
 
-	public EntityBase(UUID uuid) {
-		this.id = createId(uuid);
-	}
-
-	public EntityBase(String id) {
-		UUID buffer = UUID.fromString(id);
-		this.id = createId(buffer);
-	}
 
 	@Override
 	public int hashCode() {
@@ -91,17 +84,5 @@ public abstract class EntityBase implements Entity {
 	@Override
 	public String toString() {
 		return getId();
-	}
-
-	abstract protected String prefixId();
-
-	private String createId(UUID uuid) {
-		return prefixId() + "-" + uuid.toString();
-	}
-
-	@Override
-	public void generateId() {
-		// TODO: Ver si se puede mejoerar la forma
-		this.id = createId(UUID.randomUUID());
 	}
 }

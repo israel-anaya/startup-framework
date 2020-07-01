@@ -21,15 +21,15 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.startupframework.dto.DataTransferObject;
 
 /**
- * RestController for DataTransferObjects and inherited.
+ * Controller for DataTransferObjects and inherited.
  * 
  * GET (get a single item or a collection)
  * 
@@ -43,22 +43,25 @@ import org.startupframework.dto.DataTransferObject;
  */
 @CrossOrigin(origins = "*")
 public interface CRUDController<DTO extends DataTransferObject> {
-
-	static final String URL_BASE = "/";
-
-	@GetMapping(URL_BASE)
+//TODO: Hacer un interface para soportar el filtrado dinámico, no siempre se debe de poder filtar así.
+	
+	@GetMapping()
 	@ResponseBody
 	ResponseEntity<List<DTO>> getAllItems();
 
-	@GetMapping(value = URL_BASE + "{id}")
+	@GetMapping("/actives")
+	@ResponseBody
+	ResponseEntity<List<DTO>> getAllActiveItems();
+
+	@GetMapping("/{id}")
 	@ResponseBody
 	ResponseEntity<DTO> getItem(@PathVariable("id") String id);
 
-	@PostMapping(value = URL_BASE)
+	@PostMapping()
 	@ResponseBody
 	ResponseEntity<DTO> createItem(@RequestBody DTO item);
 
-	@PutMapping(value = URL_BASE)
+	@PatchMapping()
 	@ResponseBody
 	ResponseEntity<DTO> updateItem(@RequestBody DTO item);
 

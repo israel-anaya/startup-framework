@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.startupframework.controller;
+package org.startupframework.controller.service;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -25,13 +25,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.startupframework.datasource.ChildDataSource;
-import org.startupframework.dto.ChildDataTransferObject;
+import org.startupframework.controller.CRUDController;
+import org.startupframework.controller.StartupEndpoint;
+import org.startupframework.dto.DataTransferObject;
+import org.startupframework.service.CRUDService;
 
 import lombok.Getter;
 
 /**
- * RestController for DataTransferObjects and inherited.
+ * Base Controller with Service.
  * 
  * GET (get a single item or a collection)
  * 
@@ -43,30 +45,41 @@ import lombok.Getter;
  * 
  * @author Arq. Jesús Israel Anaya Salazar
  */
-public abstract class DataSourceChildController<DTO extends ChildDataTransferObject, DS extends ChildDataSource<DTO>>
-		extends StartupEndpoint implements CRUDChildController<DTO> {
+public abstract class CRUDControllerBase<DTO extends DataTransferObject, S extends CRUDService<DTO>>
+		extends StartupEndpoint implements CRUDController<DTO> {
 
 	static final String ASSERT_SERVICE = "Should implements service for %s";
 
 	@Getter
-	final DS dataSource;
+	final S service;
 
-	protected DataSourceChildController(DS dataSource) {
-		assert dataSource != null : String.format(ASSERT_SERVICE, this.getClass().getName());
-		this.dataSource = dataSource;
+	protected CRUDControllerBase(S service) {
+		assert service != null : String.format(ASSERT_SERVICE, this.getClass().getName());
+		this.service = service;
 	}
-	
+
 	protected <T> void updateProperty(Supplier<T> source, Consumer<T> target) {
 		T value = source.get();
 		if (value != null)
 			target.accept(value);
 	}
-	
+
 	abstract protected void updateProperties(DTO source, DTO target);
 
 	// -------------------Retrieve AllData----------------------
-	public @ResponseBody ResponseEntity<List<DTO>> getAllItems(@PathVariable("parentId") String parentId) {
-		List<DTO> data = dataSource.findAll(parentId);
+	public @ResponseBody ResponseEntity<List<DTO>> getAllItems() {
+		List<DTO> data = service.findAll();
+
+		if (data.isEmpty()) {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		} else {
+			return new ResponseEntity<>(data, HttpStatus.OK);
+		}
+	}
+
+	// -------------------Retrieve AllData----------------------
+	public @ResponseBody ResponseEntity<List<DTO>> getAllActiveItems() {
+		List<DTO> data = service.findAllActives();
 
 		if (data.isEmpty()) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -76,33 +89,25 @@ public abstract class DataSourceChildController<DTO extends ChildDataTransferObj
 	}
 
 	// -------------------Retrieve Single----------------------
-	public @ResponseBody ResponseEntity<DTO> getItem(@PathVariable("parentId") String parentId,
-			@PathVariable("childId") String childId) {
-		DTO item = dataSource.findById(parentId, childId);
+	public @ResponseBody ResponseEntity<DTO> getItem(@PathVariable("id") String id) {
+		DTO item = service.findById(id);
 		return new ResponseEntity<>(item, HttpStatus.OK);
 	}
 
 	// -------------------Create a Item----------------------
-	public ResponseEntity<DTO> createItem(@PathVariable("parentId") String parentId, @RequestBody DTO item) {
-		DTO newItem = dataSource.save(parentId, item.getChildId(), item);
+	public ResponseEntity<DTO> createItem(@RequestBody DTO item) {
+		DTO newItem = service.save(item);
 		return new ResponseEntity<>(newItem, HttpStatus.CREATED);
 	}
 
-	// ------------------- Update an Item----------------------
-	public ResponseEntity<DTO> updateItem(@PathVariable("parentId") String parentId, @RequestBody DTO item) {
-		DTO currentItem = dataSource.findById(parentId, item.getChildId());
+	// ------------------- Update a Item----------------------
+	public ResponseEntity<DTO> updateItem(@RequestBody DTO item) {
+		DTO currentItem = null;
+		currentItem = service.findById(item.getId());
 
 		updateProperties(item, currentItem);
 
-		DTO updatedItem = dataSource.save(parentId, item.getChildId(), currentItem);
+		DTO updatedItem = service.save(currentItem);
 		return new ResponseEntity<>(updatedItem, HttpStatus.OK);
-	}
-
-	// ------------------- Delete an Item----------------------
-	public @ResponseBody ResponseEntity<DTO> deleteItem(@PathVariable("parentId") String parentId,
-			@PathVariable("childId") String childId) {
-		DTO deleteItem = dataSource.findById(parentId, childId);
-		dataSource.deleteById(parentId, childId);
-		return new ResponseEntity<>(deleteItem, HttpStatus.OK);
 	}
 }

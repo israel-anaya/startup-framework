@@ -26,6 +26,10 @@ import java.util.function.Supplier;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.core.GenericTypeResolver;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
@@ -33,9 +37,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
-import org.startupframework.data.entity.Entity;
 import org.startupframework.data.entity.OldNewPred;
+import org.startupframework.data.entity.id.EntityId;
+import org.startupframework.data.entity.id.IdStrategy;
 import org.startupframework.data.repository.EntityRepository;
+import org.startupframework.entity.Entity;
 import org.startupframework.entity.Identifiable;
 import org.startupframework.exception.DataNotFoundException;
 import org.startupframework.exception.DuplicateDataException;
@@ -44,12 +50,13 @@ import org.startupframework.service.ObjectValidatorService;
 import lombok.Getter;
 
 /**
- * Service base class for EntityBase and inherited.
+ * Service base class with Entity.
  *
  * @author Arq. Jesús Israel Anaya Salazar
  */
-public abstract class EntityServiceBase<R extends EntityRepository<E>, E extends Entity> extends ObjectValidatorService<E>
-		implements EntityService<E> {
+@ComponentScan(basePackageClasses = IdStrategy.class)
+public abstract class EntityServiceBase<R extends EntityRepository<E>, E extends Entity>
+		extends ObjectValidatorService<E> implements EntityService<E> {
 
 	static final String ASSERT_REPOSITORY = "Should implements repository for %s";
 	static final String ID_NAME = "id";
@@ -58,11 +65,28 @@ public abstract class EntityServiceBase<R extends EntityRepository<E>, E extends
 	final R repository;
 
 	@Autowired
+	private ApplicationContext applicationContext;
+
+	EntityId entityId;
+
+	@SuppressWarnings("unchecked")
+	@Autowired
 	protected EntityServiceBase(final R repository) {
 		assert repository != null : String.format(ASSERT_REPOSITORY, this.getClass().getName());
 		this.repository = repository;
-		// Anotación para las excepiones  y los prefijos
 
+		Class<?>[] arguments = GenericTypeResolver.resolveTypeArguments(this.getClass(), EntityServiceBase.class);
+		Class<E> entityType = (Class<E>) arguments[1];
+		entityId = AnnotatedElementUtils.findMergedAnnotation(entityType, EntityId.class);
+		if (entityId == null) {
+			throw new IllegalArgumentException("Entity need EntityIdPrefix Annotation");
+		}
+	}
+	
+	protected void onBeforeSave(E entity) {
+	}
+
+	protected void onAfterSave(E entity) {
 	}
 
 	protected void existsBy(SingularAttribute<E, ?> attribute, Supplier<Object> supplier) {
@@ -88,10 +112,10 @@ public abstract class EntityServiceBase<R extends EntityRepository<E>, E extends
 		Date currentDate = java.sql.Timestamp.valueOf(localDateTime);
 		return currentDate;
 	}
-	
+
 	protected void updateDateTime(E entity) {
 		Date currentDate = getCurrentDate();
-		
+
 		if (entity.getCreatedDate() == null) {
 			entity.setCreatedDate(currentDate);
 		}
@@ -123,15 +147,22 @@ public abstract class EntityServiceBase<R extends EntityRepository<E>, E extends
 		return foundItem.orElseThrow(() -> DataNotFoundException.from(value));
 	}
 
+	protected void generateId(E entity) {
+		if (entity.getId() == null) {
+			Class<? extends IdStrategy> clazz = entityId.strategy();
+			IdStrategy idStrategy = applicationContext.getBean(clazz);
+			String id = idStrategy.generate(entityId.value());
+			entity.setId(id);
+		}
+	}
+
 	@Override
 	public E save(E entity) {
 		updateDateTime(entity);
 		onBeforeSave(entity);
-		if (entity.getId() == null) {
-			entity.generateId();
-		}
+		generateId(entity);
 		validateObjectConstraints(entity);
-		onValidateEntity(entity);
+		onValidateObject(entity);
 		E result = getRepository().save(entity);
 		onAfterSave(entity);
 		return result;

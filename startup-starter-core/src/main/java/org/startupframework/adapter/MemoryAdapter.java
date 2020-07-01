@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.startupframework.datasource;
+package org.startupframework.adapter;
 
 
 import java.util.ArrayList;
@@ -29,9 +29,9 @@ import org.startupframework.dto.DataTransferObject;
  *
  * @author Arq. Jesús Israel Anaya Salazar
  */
-public class MemoryDataSource<DTO extends DataTransferObject> implements DataSource<DTO> {
+public class MemoryAdapter<DTO extends DataTransferObject> implements CRUDAdapter<DTO> {
 
-	public MemoryDataSource() {
+	public MemoryAdapter() {
 		
 	}
 	
@@ -73,6 +73,13 @@ public class MemoryDataSource<DTO extends DataTransferObject> implements DataSou
 	@Override
 	public void deleteById(String id) {
 		buffer.remove(id);
+	}
+
+	@Override
+	public List<DTO> findByActive(boolean value) {
+		//Stream<Entry<String, DTO>> data = buffer.entrySet().stream();
+		//data.filter(item -> item.getValue().)
+		throw new UnsupportedOperationException();
 	}
 
 }

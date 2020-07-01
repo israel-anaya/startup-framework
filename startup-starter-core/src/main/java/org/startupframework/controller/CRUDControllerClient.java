@@ -20,9 +20,9 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.startupframework.dto.DataTransferObject;
 
@@ -31,9 +31,9 @@ import org.startupframework.dto.DataTransferObject;
  * 
  * GET (get a single item or a collection)
  * 
- * POST (add an item to a collection) 
+ * POST (add an item to a collection)
  * 
- * PUT (edit an item that already exists in a collection) 
+ * PUT (edit an item that already exists in a collection)
  * 
  * DELETE (delete an item in a collection)
  * 
@@ -42,18 +42,19 @@ import org.startupframework.dto.DataTransferObject;
 @CrossOrigin(origins = "*")
 public interface CRUDControllerClient<DTO extends DataTransferObject> {
 
-	static final String URL_BASE = "/";
-
-	@GetMapping(URL_BASE)
+	@GetMapping()
 	List<DTO> getAllItems();
 
-	@GetMapping(value = URL_BASE + "{id}")
+	@GetMapping("/actives")
+	List<DTO> getAllActiveItems();
+	
+	@GetMapping("/{id}")
 	DTO getItem(@PathVariable("id") String id);
 
-	@PostMapping(value = URL_BASE)
+	@PostMapping()
 	DTO createItem(@RequestBody DTO item);
 
-	@PutMapping(value = URL_BASE)
+	@PatchMapping()
 	DTO updateItem(@RequestBody DTO item);
-
+	
 }

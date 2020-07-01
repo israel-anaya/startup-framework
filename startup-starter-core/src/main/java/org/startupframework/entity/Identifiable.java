@@ -30,8 +30,6 @@ public interface Identifiable<ID extends Serializable> {
 
 	void setId(ID id);
 
-	void generateId();
-
 	static void validate(Object idValue, String idName) {
 		if (idValue == null)
 			throw NullIdException.fromIdName(idName);

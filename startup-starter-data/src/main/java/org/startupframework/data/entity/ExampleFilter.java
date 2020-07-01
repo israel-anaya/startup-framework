@@ -26,6 +26,7 @@ import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.ExampleMatcher.GenericPropertyMatcher;
+import org.startupframework.entity.Entity;
 
 /**
 *

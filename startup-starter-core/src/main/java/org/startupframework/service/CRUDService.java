@@ -14,45 +14,29 @@
  * limitations under the License.
  */
 
-package org.startupframework.data.service;
+package org.startupframework.service;
 
-import java.util.Date;
 import java.util.List;
 
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.startupframework.entity.Entity;
+import org.startupframework.entity.Identifiable;
 
 /**
- * Service with Entity.
+ * Service interface with DataTransferObject.
  *
  * @author Arq. Jesús Israel Anaya Salazar
  */
-public interface EntityService<E extends Entity> {
+public interface CRUDService<DTO extends Identifiable<String>> {
 
-	E save(E entity);
+	DTO save(DTO dto);
 
-	E findById(String id);
+	DTO findById(String id);
 
 	boolean existsById(String id);
 
-	List<E> findAll();
+	List<DTO> findAll();
 	
-	List<E> findAllById(Iterable<String> ids);
-
-	Page<E> findAll(Pageable pageable);
-
-	Page<E> findAll(Example<E> example, Pageable pageable);
-
-	long count();
-
+	List<DTO> findAllActives();
+	
 	void deleteById(String id);
-
-	void delete(E entity);
-
-	List<E> findByActive(boolean value);
-
-	List<E> findByCreatedDateGreaterThan(Date date);
 
 }

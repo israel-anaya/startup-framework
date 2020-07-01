@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.startupframework.service;
+package org.startupframework.service.dto;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,32 +22,32 @@ import java.util.Optional;
 import org.startupframework.dto.DataTransferObject;
 import org.startupframework.entity.Identifiable;
 import org.startupframework.exception.DataNotFoundException;
+import org.startupframework.service.CRUDServiceChild;
+import org.startupframework.service.ObjectValidatorService;
 
 import lombok.Getter;
 
 /**
- * Service base class for EntityBase and inherited.
+ * Child Service base class with DTO.
  *
  * @author Arq. Jesús Israel Anaya Salazar
  */
-public abstract class ChildDataTransferObjectServiceBase<DTO extends DataTransferObject> extends ObjectValidatorService<DTO>
-		implements ChildDataTransferObjectService<DTO> {
+public abstract class CRUDServiceChildBase<DTO extends DataTransferObject> extends ObjectValidatorService<DTO>
+		implements CRUDServiceChild<DTO> {
 
 	@Getter
 	boolean isAggregated;
 
-	protected ChildDataTransferObjectServiceBase(boolean isAggregated) {
+	protected CRUDServiceChildBase(boolean isAggregated) {
 		super();
 		this.isAggregated = isAggregated;
 	}
 
-	/*abstract protected String getParentId(DTO dto);
+	protected void onBeforeSave(DTO dto) {
+	}
 
-	abstract protected void setParentId(String parentId, DTO dto);
-
-	abstract protected String getChildId(DTO dto);
-
-	abstract protected void setChildId(String childId, DTO dto);*/
+	protected void onAfterSave(DTO dto) {
+	}
 
 	abstract protected DTO onSave(String parentId, String childId, DTO dto);
 
@@ -66,16 +66,14 @@ public abstract class ChildDataTransferObjectServiceBase<DTO extends DataTransfe
 	final public DTO save(String parentId, String childId, DTO dto) {
 
 		Identifiable.validate(parentId, "parentId");
-		//setParentId(parentId, dto);
 
 		if (!isAggregated) {
 			Identifiable.validate(childId, "childId");
-			//setChildId(childId, dto);
 		}
 
 		onBeforeSave(dto);
 		validateObjectConstraints(dto);
-		onValidateEntity(dto);
+		onValidateObject(dto);
 		DTO result = onSave(parentId, childId, dto);
 		onAfterSave(dto);
 		return result;

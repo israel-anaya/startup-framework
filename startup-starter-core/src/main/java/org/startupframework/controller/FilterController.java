@@ -14,24 +14,30 @@
  * limitations under the License.
  */
 
-package org.startupframework.datasource;
+package org.startupframework.controller;
 
 import java.util.List;
 
-import org.startupframework.dto.ChildDataTransferObject;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.startupframework.dto.DataTransferObject;
 
 /**
- * Service interface for ChildDataSource.
- *
+ * Controller for Filter Data.
+ * 
+ * GET (get items or a collection)
+ * 
  * @author Arq. Jesús Israel Anaya Salazar
  */
-public interface ChildDataSource<DTO extends ChildDataTransferObject> {
+@CrossOrigin(origins = "*")
+public interface FilterController<DTO extends DataTransferObject> {
 
-	DTO save(String parentId, String childId, DTO dto);
+	@GetMapping()
+	@ResponseBody
+	default ResponseEntity<List<DTO>> getItems(DTO dto) {
+		return null; // TODO: IMplementar filtrado
+	}
 
-	DTO findById(String parentId, String childId);
-
-	List<DTO> findAll(String parentId);
-
-	void deleteById(String parentId, String childId);
 }

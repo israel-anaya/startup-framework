@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
-package org.startupframework.data.datasource;
+package org.startupframework.data.adapter.entity;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.startupframework.adapter.CRUDAdapter;
 import org.startupframework.data.entity.DataConverter;
-import org.startupframework.data.entity.Entity;
 import org.startupframework.data.service.EntityService;
-import org.startupframework.datasource.DataSource;
-import org.startupframework.dto.DataTransferObject;
+import org.startupframework.dto.EntityDTO;
+import org.startupframework.entity.Entity;
 import org.startupframework.exception.DataNotFoundException;
 
 /**
-*
-* @author Arq. Jesús Israel Anaya Salazar
-*/
-public abstract class EntityServiceDataSource<DTO extends DataTransferObject, E extends Entity, S extends EntityService<E>>
-		extends EntityServiceDataSourceBase<DTO, E, S> implements DataSource<DTO> {
+ *
+ * @author Arq. Jesús Israel Anaya Salazar
+ */
+public abstract class EntityServiceAdapter<DTO extends EntityDTO, E extends Entity, S extends EntityService<E>>
+		extends EntityServiceAdapterBase<DTO, E, S> implements CRUDAdapter<DTO> {
 
-	protected EntityServiceDataSource(final S service, DataConverter<DTO, E> dataConverter) {
+	protected EntityServiceAdapter(final S service, DataConverter<DTO, E> dataConverter) {
 		super(service, dataConverter);
 	}
 
@@ -88,6 +88,17 @@ public abstract class EntityServiceDataSource<DTO extends DataTransferObject, E 
 	@Override
 	public void deleteById(String id) {
 		getService().deleteById(id);
+	}
+
+	@Override
+	public List<DTO> findByActive(boolean value) {
+		ArrayList<DTO> data = new ArrayList<>();
+
+		List<E> entities = getService().findByActive(value);
+		for (E entity : entities) {
+			data.add(toDataTransferObject(entity));
+		}
+		return data;
 	}
 
 }

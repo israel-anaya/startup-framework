@@ -17,7 +17,6 @@
 package org.startupframework.dto;
 
 import java.util.Objects;
-import java.util.UUID;
 
 import lombok.Data;
 
@@ -31,15 +30,6 @@ public class DataTransferObjectBase implements DataTransferObject {
 	private String id;
 
 	public DataTransferObjectBase() {		
-	}
-
-	public DataTransferObjectBase(UUID uuid) {
-		this.id = uuid.toString();
-	}
-
-	public DataTransferObjectBase(String id) {
-		UUID buffer = UUID.fromString(id);
-		this.id = buffer.toString();
 	}
 	
 	@Override
@@ -67,10 +57,5 @@ public class DataTransferObjectBase implements DataTransferObject {
 	@Override
 	public String toString() {
 		return getId();
-	}
-
-	@Override
-	public void generateId() {
-		this.id = UUID.randomUUID().toString();
 	}
 }

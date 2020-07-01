@@ -21,9 +21,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import org.startupframework.data.entity.Entity;
 import org.startupframework.data.entity.OldNewPred;
 import org.startupframework.data.repository.EntityRepository;
+import org.startupframework.entity.Entity;
 import org.startupframework.entity.Identifiable;
 import org.startupframework.exception.DataNotFoundException;
 import org.startupframework.exception.DuplicateDataException;
@@ -31,17 +31,17 @@ import org.startupframework.exception.DuplicateDataException;
 import lombok.Getter;
 
 /**
- * Service base class for EntityBase and inherited.
+ * Child Service base class with Entity.
  *
  * @author Arq. Jesús Israel Anaya Salazar
  */
-public abstract class ChildEntityServiceBase<R extends EntityRepository<E>, E extends Entity>
-		extends EntityServiceBase<R, E> implements ChildEntityService<E> {
+public abstract class EntityServiceChildBase<R extends EntityRepository<E>, E extends Entity>
+		extends EntityServiceBase<R, E> implements EntityServiceChild<E> {
 
 	@Getter
 	boolean isAggregated;
 
-	protected ChildEntityServiceBase(final R repository, boolean isAggregated) {
+	protected EntityServiceChildBase(final R repository, boolean isAggregated) {
 		super(repository);
 		this.isAggregated = isAggregated;
 	}
@@ -66,7 +66,7 @@ public abstract class ChildEntityServiceBase<R extends EntityRepository<E>, E ex
 	final OldNewPred<E> NEED_VALIDATE = (o, n) -> !Objects.equals(getChildId(o), getChildId(n));
 
 	@Override
-	protected void onValidateEntity(E entity) {
+	protected void onValidateObject(E entity) {
 
 		Consumer<E> validation = e -> {
 

@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package org.startupframework.data.datasource;
+package org.startupframework.data.adapter.entity;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.startupframework.adapter.CRUDChildAdapter;
 import org.startupframework.data.entity.DataConverter;
-import org.startupframework.data.entity.Entity;
-import org.startupframework.data.service.ChildEntityService;
-import org.startupframework.datasource.ChildDataSource;
-import org.startupframework.dto.ChildDataTransferObject;
+import org.startupframework.data.service.EntityServiceChild;
+import org.startupframework.dto.EntityChildDTO;
+import org.startupframework.entity.Entity;
 
 /**
-*
-* @author Arq. Jesús Israel Anaya Salazar
-*/
-public abstract class ChildEntityServiceDataSource<DTO extends ChildDataTransferObject, E extends Entity, S extends ChildEntityService<E>>
-		extends EntityServiceDataSourceBase<DTO, E, S> implements ChildDataSource<DTO> {
+ *
+ * @author Arq. Jesús Israel Anaya Salazar
+ */
+public abstract class EntityServiceChildAdapter<DTO extends EntityChildDTO, E extends Entity, S extends EntityServiceChild<E>>
+		extends EntityServiceAdapterBase<DTO, E, S> implements CRUDChildAdapter<DTO> {
 
-	protected ChildEntityServiceDataSource(final S service, DataConverter<DTO, E> dataConverter) {
+	protected EntityServiceChildAdapter(final S service, DataConverter<DTO, E> dataConverter) {
 		super(service, dataConverter);
 	}
 
@@ -64,7 +64,5 @@ public abstract class ChildEntityServiceDataSource<DTO extends ChildDataTransfer
 	public void deleteById(String parentId, String childId) {
 		getService().deleteById(parentId, childId);
 	}
-
-
 
 }

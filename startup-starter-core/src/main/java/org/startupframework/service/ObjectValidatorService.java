@@ -27,7 +27,8 @@ import org.startupframework.entity.Identifiable;
 import org.startupframework.exception.DataException;
 
 /**
-*
+* Validation
+* 
 * @author Arq. Jesús Israel Anaya Salazar
 */
 abstract public class ObjectValidatorService<T extends Identifiable<String>> {
@@ -38,13 +39,13 @@ abstract public class ObjectValidatorService<T extends Identifiable<String>> {
 	@Autowired
 	Validator validator;
 
-	protected final void validateObjectConstraints(T item) {
+	protected final void validateObjectConstraints(T obj) {
 		// Valida a nivel de modelo utilizando las anotaciones del paquete:
 		// javax.validation.constraints
 		//
 		// https://www.baeldung.com/javax-validation
 		//
-		Set<ConstraintViolation<T>> constraintViolations = validator.validate(item);
+		Set<ConstraintViolation<T>> constraintViolations = validator.validate(obj);
 		if (constraintViolations.size() > 0) {
 			StringBuilder msg = new StringBuilder();
 			msg.append("Validation error(s): ");
@@ -61,12 +62,6 @@ abstract public class ObjectValidatorService<T extends Identifiable<String>> {
 		}
 	}
 
-	protected void onBeforeSave(T item) {
-	}
-
-	protected void onAfterSave(T item) {
-	}
-
-	abstract protected void onValidateEntity(T item);
+	abstract protected void onValidateObject(T obj);
 
 }

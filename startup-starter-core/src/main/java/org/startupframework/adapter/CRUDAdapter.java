@@ -14,45 +14,33 @@
  * limitations under the License.
  */
 
-package org.startupframework.data.service;
+package org.startupframework.adapter;
 
-import java.util.Date;
 import java.util.List;
 
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.startupframework.entity.Entity;
+import org.startupframework.dto.DataTransferObject;
 
 /**
- * Service with Entity.
+ * Interface for Adapter.
  *
  * @author Arq. Jesús Israel Anaya Salazar
  */
-public interface EntityService<E extends Entity> {
+public interface CRUDAdapter<DTO extends DataTransferObject> {
 
-	E save(E entity);
+	DTO save(DTO dto);
 
-	E findById(String id);
+	DTO findById(String id);
 
 	boolean existsById(String id);
 
-	List<E> findAll();
-	
-	List<E> findAllById(Iterable<String> ids);
+	List<DTO> findAll();
 
-	Page<E> findAll(Pageable pageable);
-
-	Page<E> findAll(Example<E> example, Pageable pageable);
+	List<DTO> findAllById(Iterable<String> ids);
 
 	long count();
 
 	void deleteById(String id);
-
-	void delete(E entity);
-
-	List<E> findByActive(boolean value);
-
-	List<E> findByCreatedDateGreaterThan(Date date);
-
+	
+	List<DTO> findByActive(boolean value);
+	
 }

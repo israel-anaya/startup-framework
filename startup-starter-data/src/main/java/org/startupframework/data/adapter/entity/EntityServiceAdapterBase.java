@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.startupframework.data.datasource;
+package org.startupframework.data.adapter.entity;
 
 import org.startupframework.data.entity.DataConverter;
-import org.startupframework.data.entity.Entity;
 import org.startupframework.data.service.EntityService;
-import org.startupframework.dto.DataTransferObject;
+import org.startupframework.dto.EntityDTO;
+import org.startupframework.entity.Entity;
 import org.startupframework.exception.DataException;
 
 import lombok.Getter;
@@ -28,7 +28,7 @@ import lombok.Getter;
 *
 * @author Arq. Jesús Israel Anaya Salazar
 */
-public abstract class EntityServiceDataSourceBase<DTO extends DataTransferObject, E extends Entity, S extends EntityService<E>> {
+public abstract class EntityServiceAdapterBase<DTO extends EntityDTO, E extends Entity, S extends EntityService<E>> {
 
 	static final String ASSERT_SERVICE = "Should implements service for %s";
 
@@ -37,17 +37,9 @@ public abstract class EntityServiceDataSourceBase<DTO extends DataTransferObject
 	@Getter
 	final S service;
 
-	protected EntityServiceDataSourceBase(final S service, DataConverter<DTO, E> dataConverter) {
+	protected EntityServiceAdapterBase(final S service, DataConverter<DTO, E> dataConverter) {
 		assert service != null : String.format(ASSERT_SERVICE, this.getClass().getName());
 		this.service = service;
-
-		// Class<?>[] arguments =
-		// GenericTypeResolver.resolveTypeArguments(this.getClass(),
-		// EntityServiceDataSourceBase.class);
-
-		// Class<DTO> dtoType = (Class<DTO>) arguments[0];
-		// Class<E> entityType = (Class<E>) arguments[1];
-
 		this.dataConverter = dataConverter;
 	}
 

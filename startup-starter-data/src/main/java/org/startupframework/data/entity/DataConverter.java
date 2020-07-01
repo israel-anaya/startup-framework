@@ -17,6 +17,7 @@
 package org.startupframework.data.entity;
 
 import org.startupframework.dto.DataTransferObject;
+import org.startupframework.entity.Entity;
 
 /**
 *

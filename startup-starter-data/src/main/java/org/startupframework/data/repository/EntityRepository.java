@@ -23,7 +23,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.NoRepositoryBean;
-import org.startupframework.data.entity.Entity;
+import org.startupframework.entity.Entity;
 
 /**
  * JPA Repository for Entity and inherited.

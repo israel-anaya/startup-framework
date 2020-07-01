@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.startupframework.service;
+package org.startupframework.service.dto;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,16 +22,24 @@ import java.util.Optional;
 import org.startupframework.dto.DataTransferObject;
 import org.startupframework.entity.Identifiable;
 import org.startupframework.exception.DataNotFoundException;
+import org.startupframework.service.CRUDService;
+import org.startupframework.service.ObjectValidatorService;
 
 /**
- * Service base class for EntityBase and inherited.
+ * Service base class with DTO.
  *
  * @author Arq. Jesús Israel Anaya Salazar
  */
-public abstract class DataTransferObjectServiceBase<DTO extends DataTransferObject> extends ObjectValidatorService<DTO>
-		implements DataTransferObjectService<DTO> {
+public abstract class CRUDServiceBase<DTO extends DataTransferObject> extends ObjectValidatorService<DTO>
+		implements CRUDService<DTO> {
 
 	static final String ID_NAME = "id";
+
+	protected void onBeforeSave(DTO dto) {
+	}
+
+	protected void onAfterSave(DTO dto) {
+	}
 
 	abstract protected DTO onSave(DTO dto);
 
@@ -45,7 +53,7 @@ public abstract class DataTransferObjectServiceBase<DTO extends DataTransferObje
 	final public DTO save(DTO dto) {
 		onBeforeSave(dto);
 		validateObjectConstraints(dto);
-		onValidateEntity(dto);
+		onValidateObject(dto);
 		DTO result = onSave(dto);
 		onAfterSave(dto);
 		return result;
@@ -75,4 +83,5 @@ public abstract class DataTransferObjectServiceBase<DTO extends DataTransferObje
 		Identifiable.validate(id, ID_NAME);
 		onDeleteById(id);
 	}
+
 }

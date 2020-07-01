@@ -14,15 +14,26 @@
  * limitations under the License.
  */
 
-package org.startupframework.data.entity;
+package org.startupframework.adapter;
 
-import org.startupframework.entity.Entity;
+import java.util.List;
+
+import org.startupframework.dto.DataTransferObject;
 
 /**
-*
-* @author Arq. Jesús Israel Anaya Salazar
-*/
-@FunctionalInterface
-public interface OldNewPred<E extends Entity> extends java.util.function.BiPredicate<E, E> {
+ *
+ * @author Arq. Jesús Israel Anaya Salazar
+ */
+public interface CRUDFeignClientAdapter<DTO extends DataTransferObject> {
+
+	List<DTO> getAllItems();
+
+	List<DTO> getAllActiveItems();
+	
+	DTO getItem(String id);
+
+	DTO createItem(DTO item);
+
+	DTO updateItem(DTO item);
 
 }

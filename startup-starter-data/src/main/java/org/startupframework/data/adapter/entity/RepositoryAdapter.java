@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.startupframework.data.datasource;
+package org.startupframework.data.adapter.entity;
 
 /**
 *
@@ -24,23 +24,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.startupframework.data.entity.Entity;
+import org.startupframework.adapter.CRUDAdapter;
 import org.startupframework.data.repository.EntityRepository;
-import org.startupframework.datasource.DataSource;
 import org.startupframework.dto.DataTransferObject;
+import org.startupframework.entity.Entity;
 import org.startupframework.exception.DataNotFoundException;
 
 import lombok.Getter;
 
-public abstract class EntityRepositoryDataSource<DTO extends DataTransferObject, E extends Entity, R extends EntityRepository<E>>
-		implements DataSource<DTO> {
+public abstract class RepositoryAdapter<DTO extends DataTransferObject, E extends Entity, R extends EntityRepository<E>>
+		implements CRUDAdapter<DTO> {
 
 	static final String ASSERT_REPOSITORY = "Should implements repository for %s";
 	
 	@Getter
 	final R repository;
 
-	protected EntityRepositoryDataSource(final R repository) {
+	protected RepositoryAdapter(final R repository) {
 		assert repository!= null : String.format(ASSERT_REPOSITORY, this.getClass().getName());
 		this.repository = repository;
 	}
@@ -102,5 +102,16 @@ public abstract class EntityRepositoryDataSource<DTO extends DataTransferObject,
 	@Override
 	public void deleteById(String id) {
 		getRepository().deleteById(id);
+	}
+
+	@Override
+	public List<DTO> findByActive(boolean value) {
+		ArrayList<DTO> data = new ArrayList<>();
+
+		List<E> entities = getRepository().findByActive(value, null);
+		for (E entity : entities) {
+			data.add(toDataTransferObject(entity));
+		}
+		return data;
 	}
 }
