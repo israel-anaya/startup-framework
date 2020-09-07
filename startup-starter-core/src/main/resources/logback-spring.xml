@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<include resource="org/springframework/boot/logging/logback/base.xml" />
+
+	<property name="MS_LOG_FILE" value="${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}}/microservice.log" />
+	<property name="MS_FILE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p : %m%n%wEx" />
+
+	<appender name="MS_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+		<file>${MS_LOG_FILE}</file>
+
+		<encoder>
+			<pattern>${MS_FILE_LOG_PATTERN}</pattern>
+		</encoder>
+
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+
+			<cleanHistoryOnStart>${LOG_FILE_CLEAN_HISTORY_ON_START:-false}</cleanHistoryOnStart>
+			<!-- daily rollover -->
+			<fileNamePattern>microservice-%d{dd-MM-yyyy}.gz</fileNamePattern>
+			<maxHistory>${LOG_FILE_MAX_HISTORY:-7}</maxHistory>
+
+		</rollingPolicy>
+
+
+	</appender>
+
+	<logger name="MICROSERVICE" additivity="false">
+		<appender-ref ref="CONSOLE" />
+		<appender-ref ref="MS_FILE" />
+	</logger>
+
+</configuration>
