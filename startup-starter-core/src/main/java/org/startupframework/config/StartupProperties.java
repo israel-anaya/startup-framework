@@ -16,7 +16,11 @@
 
 package org.startupframework.config;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 import lombok.Data;
 
@@ -25,6 +29,7 @@ import lombok.Data;
  *
  * @author Arq. Jesús Israel Anaya Salazar
  */
+@Component
 @ConfigurationProperties("startup")
 @Data
 public class StartupProperties {
@@ -32,5 +37,6 @@ public class StartupProperties {
 	String serviceId;
 	
 	HttpHeadersConfig headers;
-	
+
+	List<String> dependencies = new ArrayList<>();
 }
