@@ -1,1 +1,9 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.startupframework.config.StartupAutoConfiguration
+#org.springframework.cloud.bootstrap.BootstrapConfiguration=
+#org.springframework.context.ApplicationListener=
+
+org.springframework.context.ApplicationContextInitializer=\
+org.startupframework.context.StartupApplicationContextInitializer
+
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+org.startupframework.config.StartupAutoConfiguration
+
