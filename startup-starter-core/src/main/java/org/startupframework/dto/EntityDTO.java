@@ -18,7 +18,6 @@ package org.startupframework.dto;
 
 import java.util.Date;
 
-import org.startupframework.dto.DataTransferObjectBase;
 import org.startupframework.entity.Entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;

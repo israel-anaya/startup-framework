@@ -16,8 +16,6 @@
 
 package org.startupframework.dto;
 
-import org.startupframework.dto.DataTransferObject;
-
 /**
 *
 * @author Arq. Jesús Israel Anaya Salazar
