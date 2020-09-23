@@ -122,6 +122,7 @@ public class StartupControllerAspect {
 			return proceed;			
 		} catch (Throwable ex) {
 			log.warn("ServiceId:{}, Event:Exception, Method:{}, URL:{}, Error:{}", serviceId, method, url, ex.getMessage());
+			ex.printStackTrace();
 			throw ex;
 				
 		}
