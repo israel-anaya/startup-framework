@@ -18,12 +18,10 @@ package org.startupframework.controller;
 
 import java.util.List;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.startupframework.dto.DataTransferObject;
 
 /**
@@ -39,7 +37,7 @@ import org.startupframework.dto.DataTransferObject;
  * 
  * @author Arq. Jesús Israel Anaya Salazar
  */
-@CrossOrigin(origins = "*")
+
 public interface CRUDControllerClient<DTO extends DataTransferObject> {
 
 	@GetMapping()
@@ -52,9 +50,9 @@ public interface CRUDControllerClient<DTO extends DataTransferObject> {
 	DTO getItem(@PathVariable("id") String id);
 
 	@PostMapping()
-	DTO createItem(@RequestBody DTO item);
+	DTO createItem(DTO item);
 
 	@PatchMapping()
-	DTO updateItem(@RequestBody DTO item);
+	DTO updateItem(DTO item);
 	
 }

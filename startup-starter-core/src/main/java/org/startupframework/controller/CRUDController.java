@@ -19,7 +19,6 @@ package org.startupframework.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,7 +40,7 @@ import org.startupframework.dto.DataTransferObject;
  * 
  * @author Arq. Jesús Israel Anaya Salazar
  */
-@CrossOrigin(origins = "*")
+
 public interface CRUDController<DTO extends DataTransferObject> {
 //TODO: Hacer un interface para soportar el filtrado dinámico, no siempre se debe de poder filtar así.
 	
