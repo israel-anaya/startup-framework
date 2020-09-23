@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.startupframework.controller.CRUDController;
+import org.startupframework.controller.StartupController;
 import org.startupframework.controller.StartupEndpoint;
 import org.startupframework.dto.DataTransferObject;
 import org.startupframework.service.CRUDService;
@@ -45,6 +46,7 @@ import lombok.Getter;
  * 
  * @author Arq. Jesús Israel Anaya Salazar
  */
+@StartupController
 public abstract class CRUDControllerBase<DTO extends DataTransferObject, S extends CRUDService<DTO>>
 		extends StartupEndpoint implements CRUDController<DTO> {
 
