@@ -68,6 +68,11 @@ public class CRUDFeignClientAdapterBase<S extends DataTransferObject, T extends 
 		ArrayList<T> data = new ArrayList<>();
 
 		List<S> entities = getFeignClient().getAllItems();
+
+		if (entities == null) {
+			return data;
+		}
+
 		for (S source : entities) {
 			data.add(toTarget(source));
 		}
@@ -79,6 +84,11 @@ public class CRUDFeignClientAdapterBase<S extends DataTransferObject, T extends 
 		ArrayList<T> data = new ArrayList<>();
 
 		List<S> entities = getFeignClient().getAllActiveItems();
+
+		if (entities == null) {
+			return data;
+		}
+
 		for (S source : entities) {
 			data.add(toTarget(source));
 		}
