@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.startupframework.adapter.CRUDChildAdapter;
 import org.startupframework.controller.CRUDChildController;
+import org.startupframework.controller.StartupController;
 import org.startupframework.controller.StartupEndpoint;
 import org.startupframework.dto.DataTransferObjectChild;
 
@@ -45,6 +46,7 @@ import lombok.Getter;
  * 
  * @author Arq. Jesús Israel Anaya Salazar
  */
+@StartupController
 public abstract class CRUDChildControllerBase<DTO extends DataTransferObjectChild, AD extends CRUDChildAdapter<DTO>>
 		extends StartupEndpoint implements CRUDChildController<DTO> {
 
