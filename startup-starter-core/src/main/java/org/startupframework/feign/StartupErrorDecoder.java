@@ -18,15 +18,12 @@ package org.startupframework.feign;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 
-import org.springframework.beans.factory.ObjectFactory;
-import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
-import org.springframework.cloud.openfeign.support.ResponseEntityDecoder;
-import org.springframework.cloud.openfeign.support.SpringDecoder;
+import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.startupframework.entity.ErrorInfo;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -36,62 +33,49 @@ import feign.FeignException;
 import feign.Response;
 import feign.codec.ErrorDecoder;
 
-
 /**
  *
  * @author Arq. Jesús Israel Anaya Salazar
  */
 public class StartupErrorDecoder implements ErrorDecoder {
 
-	ResponseEntityDecoder decoder;
-
 	private final ErrorDecoder errorDecoder = new Default();
-	//private JacksonDecoder jacksonDecoder = new JacksonDecoder();
 
 	public StartupErrorDecoder() {
-		ObjectMapper objectMapper = new ObjectMapper();
-		HttpMessageConverter jacksonConverter = new MappingJackson2HttpMessageConverter(objectMapper);
-		ObjectFactory<HttpMessageConverters> objectFactory = () -> new HttpMessageConverters(jacksonConverter);
-		decoder = new ResponseEntityDecoder(new SpringDecoder(objectFactory));
+	}
+
+	Exception createException(ErrorInfo errorInfo)
+			throws ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+
+		Class<?> clazz = Class.forName(errorInfo.getException());
+		Constructor<?> ctor = clazz.getConstructor(String.class);
+		Exception exception = (Exception) ctor.newInstance(new Object[] { errorInfo.getErrorMessage() });
+		return exception;
 	}
 
 	@Override
 	public Exception decode(String methodKey, Response response) {
 
 		if (response.status() >= HttpStatus.BAD_REQUEST.value()) {
-			//ErrorInfo errorInfo;
+			// ErrorInfo errorInfo;
 			Reader reader = null;
 
 			try {
 				reader = response.body().asReader(StandardCharsets.UTF_8);
-				// Easy way to read the stream and get a String object
-				//String result = CharStreams.toString(reader);
-				// use a Jackson ObjectMapper to convert the Json String into a
-				// Pojo
+				String result = IOUtils.toString(reader);
 				ObjectMapper mapper = new ObjectMapper();
-				// just in case you missed an attribute in the Pojo
 				mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-				// init the Pojo
-				//ExceptionMessage exceptionMessage = mapper.readValue(result, ExceptionMessage.class);
 
-				//message = exceptionMessage.message;
+				ErrorInfo errorInfo = mapper.readValue(result, ErrorInfo.class);
 
-				/*
-				 * try { SpringErrorResponse springErrorResponse = (SpringErrorResponse)
-				 * decoder.decode(response, SpringErrorResponse.class); return new
-				 * StartupException(springErrorResponse.getMessage());
-				 * 
-				 * } catch (Exception e) { errorInfo = (ErrorInfo) decoder.decode(response,
-				 * ErrorInfo.class); return new StartupException(errorInfo.getErrorMessage());
-				 * 
-				 * }
-				 */
+				return createException(errorInfo);
 
-			} catch (FeignException | IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch (FeignException | IOException | ClassNotFoundException | NoSuchMethodException | SecurityException
+					| InstantiationException | IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException e) {
+				return e;
 			}
-
 		}
 
 		return errorDecoder.decode(methodKey, response);
