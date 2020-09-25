@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.startupframework.service;
+package org.startupframework.validation;
 
 import java.util.Set;
 
@@ -23,23 +23,34 @@ import javax.validation.Path;
 import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.startupframework.entity.Identifiable;
 import org.startupframework.exception.DataException;
 
 /**
-* Validation
-* 
-* @author Arq. Jesús Israel Anaya Salazar
-*/
-abstract public class ObjectValidatorService<T extends Identifiable<String>> {
-	
-	protected ObjectValidatorService() {
+ * Validation
+ * 
+ * @author Arq. Jesús Israel Anaya Salazar
+ */
+@Component
+public class ObjectValidator {
+
+	protected ObjectValidator() {
+	}
+
+	public static ObjectValidator instance = null;
+
+	public static ObjectValidator getInstance() {
+		if (instance == null) {
+			instance = new ObjectValidator();
+		}
+		return instance;
 	}
 
 	@Autowired
 	Validator validator;
 
-	protected final void validateObjectConstraints(T obj) {
+	public final <T extends Identifiable<String>> void validateObjectConstraints(T obj) {
 		// Valida a nivel de modelo utilizando las anotaciones del paquete:
 		// javax.validation.constraints
 		//
@@ -61,7 +72,5 @@ abstract public class ObjectValidatorService<T extends Identifiable<String>> {
 			throw new DataException(msg.toString());
 		}
 	}
-
-	abstract protected void onValidateObject(T obj);
 
 }

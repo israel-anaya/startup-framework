@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.startupframework.service.dto;
+package org.startupframework.service;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,8 +22,7 @@ import java.util.Optional;
 import org.startupframework.dto.DataTransferObject;
 import org.startupframework.entity.Identifiable;
 import org.startupframework.exception.DataNotFoundException;
-import org.startupframework.service.CRUDServiceChild;
-import org.startupframework.service.ObjectValidatorService;
+import org.startupframework.validation.ObjectValidatorService;
 
 import lombok.Getter;
 
@@ -32,8 +31,8 @@ import lombok.Getter;
  *
  * @author Arq. Jesús Israel Anaya Salazar
  */
-public abstract class CRUDServiceChildBase<DTO extends DataTransferObject> extends ObjectValidatorService<DTO>
-		implements CRUDServiceChild<DTO> {
+public abstract class CRUDServiceChildBase<DTO extends DataTransferObject>
+		implements ObjectValidatorService<DTO>, CRUDServiceChild<DTO> {
 
 	@Getter
 	boolean isAggregated;
@@ -49,6 +48,8 @@ public abstract class CRUDServiceChildBase<DTO extends DataTransferObject> exten
 	protected void onAfterSave(DTO dto) {
 	}
 
+	abstract protected void onValidateObject(DTO dto);
+
 	abstract protected DTO onSave(String parentId, String childId, DTO dto);
 
 	abstract protected List<DTO> onFindAll(String parentId);
@@ -62,6 +63,11 @@ public abstract class CRUDServiceChildBase<DTO extends DataTransferObject> exten
 		Identifiable.validate(childId, "childId");
 	}
 
+	public void validateObject(DTO dto) {
+		validateObjectConstraints(dto);
+		onValidateObject(dto);
+	}
+
 	@Override
 	final public DTO save(String parentId, String childId, DTO dto) {
 
@@ -71,9 +77,8 @@ public abstract class CRUDServiceChildBase<DTO extends DataTransferObject> exten
 			Identifiable.validate(childId, "childId");
 		}
 
+		validateObject(dto);
 		onBeforeSave(dto);
-		validateObjectConstraints(dto);
-		onValidateObject(dto);
 		DTO result = onSave(parentId, childId, dto);
 		onAfterSave(dto);
 		return result;

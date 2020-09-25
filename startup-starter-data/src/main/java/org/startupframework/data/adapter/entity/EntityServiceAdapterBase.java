@@ -21,14 +21,16 @@ import org.startupframework.data.service.EntityService;
 import org.startupframework.dto.EntityDTO;
 import org.startupframework.entity.Entity;
 import org.startupframework.exception.DataException;
+import org.startupframework.validation.ObjectValidatorService;
 
 import lombok.Getter;
 
 /**
-*
-* @author Arq. Jesús Israel Anaya Salazar
-*/
-public abstract class EntityServiceAdapterBase<DTO extends EntityDTO, E extends Entity, S extends EntityService<E>> {
+ *
+ * @author Arq. Jesús Israel Anaya Salazar
+ */
+public abstract class EntityServiceAdapterBase<DTO extends EntityDTO, E extends Entity, S extends EntityService<E>>
+		implements ObjectValidatorService<DTO> {
 
 	static final String ASSERT_SERVICE = "Should implements service for %s";
 
@@ -59,4 +61,8 @@ public abstract class EntityServiceAdapterBase<DTO extends EntityDTO, E extends 
 		}
 	}
 
+	@Override
+	public void validateObject(DTO dto) {
+		validateObjectConstraints(dto);
+	}
 }

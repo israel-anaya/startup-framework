@@ -38,6 +38,7 @@ public abstract class EntityServiceChildAdapter<DTO extends EntityChildDTO, E ex
 
 	@Override
 	public DTO save(String parentId, String childId, DTO dto) {
+		validateObject(dto);
 		E entity = toEntity(dto);
 		E result = getService().save(parentId, childId, entity);
 		return toDataTransferObject(result);

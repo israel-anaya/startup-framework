@@ -21,6 +21,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.startupframework.aspect.StartupControllerAspect;
+import org.startupframework.validation.ObjectValidator;
 
 /**
  * 
@@ -33,9 +34,14 @@ public class StartupAutoConfiguration {
 
 	@Autowired
 	private StartupProperties properties;
-	
+
 	@Bean
 	StartupControllerAspect startupControllerAspect() {
 		return new StartupControllerAspect();
+	}
+
+	@Bean
+	ObjectValidator objectValidator() {
+		return ObjectValidator.getInstance();
 	}
 }

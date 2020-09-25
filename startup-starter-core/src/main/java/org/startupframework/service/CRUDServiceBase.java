@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.startupframework.service.dto;
+package org.startupframework.service;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,16 +22,15 @@ import java.util.Optional;
 import org.startupframework.dto.DataTransferObject;
 import org.startupframework.entity.Identifiable;
 import org.startupframework.exception.DataNotFoundException;
-import org.startupframework.service.CRUDService;
-import org.startupframework.service.ObjectValidatorService;
+import org.startupframework.validation.ObjectValidatorService;
 
 /**
  * Service base class with DTO.
  *
  * @author Arq. Jesús Israel Anaya Salazar
  */
-public abstract class CRUDServiceBase<DTO extends DataTransferObject> extends ObjectValidatorService<DTO>
-		implements CRUDService<DTO> {
+public abstract class CRUDServiceBase<DTO extends DataTransferObject>
+		implements ObjectValidatorService<DTO>, CRUDService<DTO> {
 
 	static final String ID_NAME = "id";
 
@@ -41,6 +40,8 @@ public abstract class CRUDServiceBase<DTO extends DataTransferObject> extends Ob
 	protected void onAfterSave(DTO dto) {
 	}
 
+	abstract protected void onValidateObject(DTO dto);
+	
 	abstract protected DTO onSave(DTO dto);
 
 	abstract protected Optional<DTO> onFindById(String id);
@@ -49,11 +50,16 @@ public abstract class CRUDServiceBase<DTO extends DataTransferObject> extends Ob
 
 	abstract protected void onDeleteById(String id);
 
+	
+	public void validateObject(DTO dto) {
+		validateObjectConstraints(dto);
+		onValidateObject(dto);	
+	}
+	
 	@Override
 	final public DTO save(DTO dto) {
+		validateObject(dto);
 		onBeforeSave(dto);
-		validateObjectConstraints(dto);
-		onValidateObject(dto);
 		DTO result = onSave(dto);
 		onAfterSave(dto);
 		return result;

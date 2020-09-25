@@ -45,7 +45,7 @@ import org.startupframework.entity.Entity;
 import org.startupframework.entity.Identifiable;
 import org.startupframework.exception.DataNotFoundException;
 import org.startupframework.exception.DuplicateDataException;
-import org.startupframework.service.ObjectValidatorService;
+import org.startupframework.validation.ObjectValidatorService;
 
 import lombok.Getter;
 
@@ -56,7 +56,7 @@ import lombok.Getter;
  */
 @ComponentScan(basePackageClasses = IdStrategy.class)
 public abstract class EntityServiceBase<R extends EntityRepository<E>, E extends Entity>
-		extends ObjectValidatorService<E> implements EntityService<E> {
+		implements ObjectValidatorService<E>, EntityService<E> {
 
 	static final String ASSERT_REPOSITORY = "Should implements repository for %s";
 	static final String ID_NAME = "id";
@@ -82,6 +82,8 @@ public abstract class EntityServiceBase<R extends EntityRepository<E>, E extends
 			throw new IllegalArgumentException("Entity need EntityIdPrefix Annotation");
 		}
 	}
+	
+	abstract protected void onValidateObject(E entity);
 	
 	protected void onBeforeSave(E entity) {
 	}
@@ -156,13 +158,17 @@ public abstract class EntityServiceBase<R extends EntityRepository<E>, E extends
 		}
 	}
 
+	public void validateObject(E entity) {
+		validateObjectConstraints(entity);
+		onValidateObject(entity);	
+	}
+	
 	@Override
 	public E save(E entity) {
 		updateDateTime(entity);
-		onBeforeSave(entity);
 		generateId(entity);
-		validateObjectConstraints(entity);
-		onValidateObject(entity);
+		validateObject(entity);
+		onBeforeSave(entity);
 		E result = getRepository().save(entity);
 		onAfterSave(entity);
 		return result;

@@ -36,9 +36,10 @@ public abstract class EntityServiceAdapter<DTO extends EntityDTO, E extends Enti
 	protected EntityServiceAdapter(final S service, DataConverter<DTO, E> dataConverter) {
 		super(service, dataConverter);
 	}
-
+	
 	@Override
 	public DTO save(DTO dto) {
+		validateObject(dto);
 		E entity = toEntity(dto);
 		E result = getService().save(entity);
 		return toDataTransferObject(result);
