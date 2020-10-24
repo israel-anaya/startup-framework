@@ -75,7 +75,7 @@
 		<!-- Feign Client -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-openfeign</artifactId>
+			<artifactId>spring-cloud-starter-openfeign</artifactId>			
 		</dependency>
 		<!-- Http API Client -->		
 		<dependency>
