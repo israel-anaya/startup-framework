@@ -25,7 +25,7 @@
 	<packaging>pom</packaging>
 
 	<name>${project.groupId}:${project.artifactId}</name>
-	<description>Microservice Parent Startup Framework for Java Microservices Architecture based on SPRING®</description>
+	<description>Microservice Parent Startup Framework for Java Microservices based on SPRING®</description>
 	<url>http://startupframework.org</url>
 	
 	<licenses>
@@ -57,10 +57,31 @@
 	</parent>
 
 	<dependencies>
+		<!-- Spring Boot WebServer -->
+	    <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+           	<exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+	    <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-undertow</artifactId>
+        </dependency>
 		<!-- Discovery Client -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.cloud</groupId>
+					<artifactId>spring-cloud-netflix-ribbon</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<!-- Config Client -->
 		<dependency>
@@ -72,7 +93,21 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-loadbalancer</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>com.github.ben-manes.caffeine</groupId>
+			<artifactId>caffeine</artifactId>
+		</dependency>
+		<!-- Seguridad -->
+		<dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+        </dependency>
+		<!-- Startup Core -->
+		<dependency>
+			<groupId>org.startupframework</groupId>
+			<artifactId>startup-starter-core</artifactId>
+			<version>1.0.2.RELEASE</version>
+		</dependency>
 	</dependencies>
 
 	<distributionManagement>
@@ -85,6 +120,36 @@
 			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 		</repository>
 	</distributionManagement>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.jkube</groupId>
+				<artifactId>kubernetes-maven-plugin</artifactId>
+				<version>1.0.0-rc-1</version>
+				<configuration>
+					<images>
+						<image>
+							<name>startupframework/${project.artifactId}:${project.version}</name>
+							<alias>${project.artifactId}</alias>
+							<build>								
+								<dockerFile>${project.basedir}/src/main/docker/Dockerfile</dockerFile>								
+								<args>
+									<JAR_FILE>maven/${project.artifactId}-${project.version}.jar</JAR_FILE>
+								</args>
+							</build>
+						</image>
+					</images>
+					<targetDir>${project.build.directory}</targetDir>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
 
 	<profiles>
 		<profile>
