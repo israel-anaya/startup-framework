@@ -79,6 +79,14 @@
 			<exclusions>
 				<exclusion>
 					<groupId>org.springframework.cloud</groupId>
+					<artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.netflix.ribbon</groupId>
+					<artifactId>ribbon-eureka</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework.cloud</groupId>
 					<artifactId>spring-cloud-netflix-ribbon</artifactId>
 				</exclusion>
 			</exclusions>
@@ -97,7 +105,7 @@
 			<groupId>com.github.ben-manes.caffeine</groupId>
 			<artifactId>caffeine</artifactId>
 		</dependency>
-		<!-- Seguridad -->
+		<!-- Security -->
 		<dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
