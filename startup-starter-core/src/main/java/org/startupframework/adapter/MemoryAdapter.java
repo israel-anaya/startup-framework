@@ -16,7 +16,6 @@
 
 package org.startupframework.adapter;
 
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -32,11 +31,11 @@ import org.startupframework.dto.DataTransferObject;
 public class MemoryAdapter<DTO extends DataTransferObject> implements CRUDAdapter<DTO> {
 
 	public MemoryAdapter() {
-		
+
 	}
-	
+
 	Map<String, DTO> buffer = new TreeMap<>();
-	
+
 	@Override
 	public DTO save(DTO dto) {
 		buffer.put(dto.getId(), dto);
@@ -49,7 +48,7 @@ public class MemoryAdapter<DTO extends DataTransferObject> implements CRUDAdapte
 	}
 
 	@Override
-	public boolean existsById(String id) {		
+	public boolean existsById(String id) {
 		return buffer.containsKey(id);
 	}
 
@@ -61,25 +60,7 @@ public class MemoryAdapter<DTO extends DataTransferObject> implements CRUDAdapte
 	}
 
 	@Override
-	public List<DTO> findAllById(Iterable<String> ids) {
-		return null;
-	}
-
-	@Override
-	public long count() {
-		return buffer.size();
-	}
-
-	@Override
 	public void deleteById(String id) {
 		buffer.remove(id);
 	}
-
-	@Override
-	public List<DTO> findByActive(boolean value) {
-		//Stream<Entry<String, DTO>> data = buffer.entrySet().stream();
-		//data.filter(item -> item.getValue().)
-		throw new UnsupportedOperationException();
-	}
-
 }

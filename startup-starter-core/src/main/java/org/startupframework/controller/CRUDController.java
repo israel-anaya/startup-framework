@@ -19,6 +19,7 @@ package org.startupframework.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,10 +49,6 @@ public interface CRUDController<DTO extends DataTransferObject> {
 	@ResponseBody
 	ResponseEntity<List<DTO>> getAllItems();
 
-	@GetMapping("/actives")
-	@ResponseBody
-	ResponseEntity<List<DTO>> getAllActiveItems();
-
 	@GetMapping("/{id}")
 	@ResponseBody
 	ResponseEntity<DTO> getItem(@PathVariable("id") String id);
@@ -63,5 +60,9 @@ public interface CRUDController<DTO extends DataTransferObject> {
 	@PatchMapping()
 	@ResponseBody
 	ResponseEntity<DTO> updateItem(@RequestBody DTO item);
+	
+	@DeleteMapping("/{id}")
+	@ResponseBody
+	ResponseEntity<DTO> deleteItem(@PathVariable("id") String id);
 
 }

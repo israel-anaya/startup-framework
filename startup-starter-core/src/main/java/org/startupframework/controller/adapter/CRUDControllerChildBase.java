@@ -22,54 +22,44 @@ import java.util.function.Supplier;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.startupframework.adapter.CRUDChildAdapter;
-import org.startupframework.controller.CRUDChildController;
+import org.startupframework.adapter.CRUDAdapterChild;
+import org.startupframework.controller.CRUDControllerChild;
 import org.startupframework.controller.StartupController;
 import org.startupframework.controller.StartupEndpoint;
 import org.startupframework.dto.DataTransferObjectChild;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 
 /**
  * Base Child Controller with Adapter.
  * 
- * GET (get a single item or a collection)
- * 
- * POST (add an item to a collection)
- * 
- * PUT (edit an item that already exists in a collection)
- * 
- * DELETE (delete an item in a collection)
- * 
  * @author Arq. Jesús Israel Anaya Salazar
  */
 @StartupController
-public abstract class CRUDChildControllerBase<DTO extends DataTransferObjectChild, AD extends CRUDChildAdapter<DTO>>
-		extends StartupEndpoint implements CRUDChildController<DTO> {
+public abstract class CRUDControllerChildBase<DTO extends DataTransferObjectChild, AD extends CRUDAdapterChild<DTO>>
+		extends StartupEndpoint implements CRUDControllerChild<DTO> {
 
 	static final String ASSERT_SERVICE = "Should implements adapter for %s";
 
-	@Getter
-	final AD adapter;
+	@Getter(value = AccessLevel.PROTECTED)
+	private final AD adapter;
 
-	protected CRUDChildControllerBase(AD adapter) {
+	protected CRUDControllerChildBase(AD adapter) {
 		assert adapter != null : String.format(ASSERT_SERVICE, this.getClass().getName());
 		this.adapter = adapter;
 	}
-	
-	protected <T> void updateProperty(Supplier<T> source, Consumer<T> target) {
-		T value = source.get();
+
+	protected <P> void updateProperty(Supplier<P> source, Consumer<P> target) {
+		P value = source.get();
 		if (value != null)
 			target.accept(value);
 	}
-	
+
 	abstract protected void updateProperties(DTO source, DTO target);
 
-	// -------------------Retrieve AllData----------------------
-	public @ResponseBody ResponseEntity<List<DTO>> getAllItems(@PathVariable("parentId") String parentId) {
+	@Override
+	public ResponseEntity<List<DTO>> getAllItems(String parentId) {
 		List<DTO> data = adapter.findAll(parentId);
 
 		if (data.isEmpty()) {
@@ -79,21 +69,20 @@ public abstract class CRUDChildControllerBase<DTO extends DataTransferObjectChil
 		}
 	}
 
-	// -------------------Retrieve Single----------------------
-	public @ResponseBody ResponseEntity<DTO> getItem(@PathVariable("parentId") String parentId,
-			@PathVariable("childId") String childId) {
+	@Override
+	public ResponseEntity<DTO> getItem(String parentId, String childId) {
 		DTO item = adapter.findById(parentId, childId);
 		return new ResponseEntity<>(item, HttpStatus.OK);
 	}
 
-	// -------------------Create a Item----------------------
-	public ResponseEntity<DTO> createItem(@PathVariable("parentId") String parentId, @RequestBody DTO item) {
+	@Override
+	public ResponseEntity<DTO> createItem(String parentId, DTO item) {
 		DTO newItem = adapter.save(parentId, item.getChildId(), item);
 		return new ResponseEntity<>(newItem, HttpStatus.CREATED);
 	}
 
-	// ------------------- Update an Item----------------------
-	public ResponseEntity<DTO> updateItem(@PathVariable("parentId") String parentId, @RequestBody DTO item) {
+	@Override
+	public ResponseEntity<DTO> updateItem(String parentId, DTO item) {
 		DTO currentItem = adapter.findById(parentId, item.getChildId());
 
 		updateProperties(item, currentItem);
@@ -102,9 +91,8 @@ public abstract class CRUDChildControllerBase<DTO extends DataTransferObjectChil
 		return new ResponseEntity<>(updatedItem, HttpStatus.OK);
 	}
 
-	// ------------------- Delete an Item----------------------
-	public @ResponseBody ResponseEntity<DTO> deleteItem(@PathVariable("parentId") String parentId,
-			@PathVariable("childId") String childId) {
+	@Override
+	public ResponseEntity<DTO> deleteItem(String parentId, String childId) {
 		DTO deleteItem = adapter.findById(parentId, childId);
 		adapter.deleteById(parentId, childId);
 		return new ResponseEntity<>(deleteItem, HttpStatus.OK);

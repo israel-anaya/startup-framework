@@ -16,31 +16,14 @@
 
 package org.startupframework.adapter;
 
-import java.util.List;
-
 import org.startupframework.dto.DataTransferObject;
+import org.startupframework.service.CRUDService;
 
 /**
  * Interface for Adapter.
  *
  * @author Arq. Jesús Israel Anaya Salazar
  */
-public interface CRUDAdapter<DTO extends DataTransferObject> {
-
-	DTO save(DTO dto);
-
-	DTO findById(String id);
-
-	boolean existsById(String id);
-
-	List<DTO> findAll();
-
-	List<DTO> findAllById(Iterable<String> ids);
-
-	long count();
-
-	void deleteById(String id);
-	
-	List<DTO> findByActive(boolean value);
-	
+public interface CRUDAdapter<DTO extends DataTransferObject> extends CRUDService<DTO> {
+		
 }

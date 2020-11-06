@@ -22,54 +22,44 @@ import java.util.function.Supplier;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.startupframework.adapter.CRUDAdapter;
 import org.startupframework.controller.CRUDController;
 import org.startupframework.controller.StartupController;
 import org.startupframework.controller.StartupEndpoint;
 import org.startupframework.dto.DataTransferObject;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 
 /**
  * Base Controller with Adapter.
  * 
- * GET (get a single item or a collection)
- * 
- * POST (add an item to a collection)
- * 
- * PUT (edit an item that already exists in a collection)
- * 
- * DELETE (delete an item in a collection)
- * 
  * @author Arq. Jesús Israel Anaya Salazar
  */
 @StartupController
-public abstract class CRUDControllerBase<DTO extends DataTransferObject, AD extends CRUDAdapter<DTO>>
-		extends StartupEndpoint implements CRUDController<DTO> {
+public abstract class CRUDControllerBase<DTO extends DataTransferObject, AD extends CRUDAdapter<DTO>> extends StartupEndpoint
+		implements CRUDController<DTO> {
 
 	static final String ASSERT_SERVICE = "Should implements adapter for %s";
 
-	@Getter
-	final AD adapter;
+	@Getter(value = AccessLevel.PROTECTED)
+	private final AD adapter;
 
 	protected CRUDControllerBase(AD adapter) {
 		assert adapter != null : String.format(ASSERT_SERVICE, this.getClass().getName());
 		this.adapter = adapter;
 	}
 
-	protected <T> void updateProperty(Supplier<T> source, Consumer<T> target) {
-		T value = source.get();
+	protected <P> void updateProperty(Supplier<P> source, Consumer<P> target) {
+		P value = source.get();
 		if (value != null)
 			target.accept(value);
 	}
 
 	abstract protected void updateProperties(DTO source, DTO target);
 
-	// -------------------Retrieve AllData----------------------
-	public @ResponseBody ResponseEntity<List<DTO>> getAllItems() {
+	@Override
+	public ResponseEntity<List<DTO>> getAllItems() {
 		List<DTO> data = adapter.findAll();
 
 		if (data.isEmpty()) {
@@ -79,31 +69,20 @@ public abstract class CRUDControllerBase<DTO extends DataTransferObject, AD exte
 		}
 	}
 
-	// -------------------Retrieve AllActiveData----------------------
-	public @ResponseBody ResponseEntity<List<DTO>> getAllActiveItems() {
-		List<DTO> data = adapter.findByActive(true);
-
-		if (data.isEmpty()) {
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-		} else {
-			return new ResponseEntity<>(data, HttpStatus.OK);
-		}
-	}
-
-	// -------------------Retrieve Single----------------------
-	public @ResponseBody ResponseEntity<DTO> getItem(@PathVariable("id") String id) {
+	@Override
+	public ResponseEntity<DTO> getItem(String id) {
 		DTO item = adapter.findById(id);
 		return new ResponseEntity<>(item, HttpStatus.OK);
 	}
 
-	// -------------------Create a Item----------------------
-	public ResponseEntity<DTO> createItem(@RequestBody DTO item) {
+	@Override
+	public ResponseEntity<DTO> createItem(DTO item) {
 		DTO newItem = adapter.save(item);
 		return new ResponseEntity<>(newItem, HttpStatus.CREATED);
 	}
 
-	// ------------------- Update a Item----------------------
-	public ResponseEntity<DTO> updateItem(@RequestBody DTO item) {
+	@Override
+	public ResponseEntity<DTO> updateItem(DTO item) {
 		DTO currentItem = null;
 		currentItem = adapter.findById(item.getId());
 
@@ -112,4 +91,12 @@ public abstract class CRUDControllerBase<DTO extends DataTransferObject, AD exte
 		DTO updatedItem = adapter.save(currentItem);
 		return new ResponseEntity<>(updatedItem, HttpStatus.OK);
 	}
+
+	@Override
+	public ResponseEntity<DTO> deleteItem(String id) {
+		DTO deleteItem = adapter.findById(id);
+		adapter.deleteById(id);
+		return new ResponseEntity<>(deleteItem, HttpStatus.OK);
+	}
+
 }

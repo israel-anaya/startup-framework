@@ -14,36 +14,37 @@
  * limitations under the License.
  */
 
-package org.startupframework.adapter;
+package org.startupframework.feign.service;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.startupframework.controller.CRUDControllerClient;
 import org.startupframework.dto.DTOConverter;
 import org.startupframework.dto.DataTransferObject;
 import org.startupframework.exception.DataException;
-import org.startupframework.exception.DataNotFoundException;
+import org.startupframework.feign.CRUDFeign;
+import org.startupframework.validation.ObjectValidatorService;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 
 /**
  *
  * @author Arq. Jesús Israel Anaya Salazar
  */
-public class CRUDFeignClientAdapterBase<S extends DataTransferObject, T extends DataTransferObject, FC extends CRUDControllerClient<S>>
-		implements CRUDFeignClientAdapter<T> {
+public abstract class CRUDFeignService<S extends DataTransferObject, T extends DataTransferObject, F extends CRUDFeign<S>>
+		implements ObjectValidatorService<T>, CRUDFeign<T> {
 
 	static final String ASSERT_SERVICE = "Should implements Feign client for %s";
 
 	DTOConverter<S, T> converter;
 
-	@Getter
-	final FC feignClient;
+	@Getter(value = AccessLevel.PROTECTED)
+	private final F feign;
 
-	protected CRUDFeignClientAdapterBase(final FC feignClient, DTOConverter<S, T> dataConverter) {
-		assert feignClient != null : String.format(ASSERT_SERVICE, this.getClass().getName());
-		this.feignClient = feignClient;
+	protected CRUDFeignService(final F feign, DTOConverter<S, T> dataConverter) {
+		assert feign != null : String.format(ASSERT_SERVICE, this.getClass().getName());
+		this.feign = feign;
 		this.converter = dataConverter;
 	}
 
@@ -62,12 +63,19 @@ public class CRUDFeignClientAdapterBase<S extends DataTransferObject, T extends 
 			throw new DataException(ex);
 		}
 	}
+	
+	abstract protected void onValidateObject(T dto);
+	
+	public void validateObject(T dto) {
+		validateObjectConstraints(dto);
+		onValidateObject(dto);	
+	}
 
 	@Override
 	public List<T> getAllItems() {
 		ArrayList<T> data = new ArrayList<>();
 
-		List<S> entities = getFeignClient().getAllItems();
+		List<S> entities = getFeign().getAllItems();
 
 		if (entities == null) {
 			return data;
@@ -77,44 +85,33 @@ public class CRUDFeignClientAdapterBase<S extends DataTransferObject, T extends 
 			data.add(toTarget(source));
 		}
 		return data;
-	}
-
-	@Override
-	public List<T> getAllActiveItems() {
-		ArrayList<T> data = new ArrayList<>();
-
-		List<S> entities = getFeignClient().getAllActiveItems();
-
-		if (entities == null) {
-			return data;
-		}
-
-		for (S source : entities) {
-			data.add(toTarget(source));
-		}
-		return data;
-	}
-
-	@Override
-	public T createItem(T item) {
-		S source = toSource(item);
-		S result = getFeignClient().createItem(source);
-		return toTarget(result);
 	}
 
 	@Override
 	public T getItem(String id) {
-		S foundItem = getFeignClient().getItem(id);
-		if (foundItem == null) {
-			throw DataNotFoundException.fromId(id);
-		}
+		S foundItem = getFeign().getItem(id);
 		return toTarget(foundItem);
 	}
 
 	@Override
-	public T updateItem(T item) {
+	public T createItem(T item) {
+		validateObject(item);
 		S source = toSource(item);
-		S result = getFeignClient().createItem(source);
+		S result = getFeign().createItem(source);
+		return toTarget(result);
+	}
+
+	@Override
+	public T updateItem(T item) {
+		validateObject(item);
+		S source = toSource(item);
+		S result = getFeign().updateItem(source);
+		return toTarget(result);
+	}
+
+	@Override
+	public T deleteItem(String id) {
+		S result = getFeign().deleteItem(id);
 		return toTarget(result);
 	}
 

@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package org.startupframework.controller;
+package org.startupframework.feign;
 
 import java.util.List;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,13 +39,10 @@ import org.startupframework.dto.DataTransferObject;
  * @author Arq. Jesús Israel Anaya Salazar
  */
 
-public interface CRUDControllerClient<DTO extends DataTransferObject> {
+public interface CRUDFeign<DTO extends DataTransferObject> {
 
 	@GetMapping()
 	List<DTO> getAllItems();
-
-	@GetMapping("/actives")
-	List<DTO> getAllActiveItems();
 	
 	@GetMapping("/{id}")
 	DTO getItem(@PathVariable("id") String id);
@@ -54,5 +52,8 @@ public interface CRUDControllerClient<DTO extends DataTransferObject> {
 
 	@PatchMapping()
 	DTO updateItem(DTO item);
+	
+	@DeleteMapping("/{id}")
+	DTO deleteItem(@PathVariable("id") String id);
 	
 }

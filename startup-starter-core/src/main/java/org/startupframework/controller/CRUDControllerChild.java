@@ -42,7 +42,7 @@ import org.startupframework.dto.DataTransferObjectChild;
  * @author Arq. Jesús Israel Anaya Salazar
  */
 
-public interface CRUDChildController<DTO extends DataTransferObjectChild> {
+public interface CRUDControllerChild<DTO extends DataTransferObjectChild> {
 
 	@GetMapping()
 	@ResponseBody

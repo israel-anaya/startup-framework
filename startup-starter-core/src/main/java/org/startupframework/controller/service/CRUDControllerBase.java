@@ -22,27 +22,17 @@ import java.util.function.Supplier;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.startupframework.controller.CRUDController;
 import org.startupframework.controller.StartupController;
 import org.startupframework.controller.StartupEndpoint;
 import org.startupframework.dto.DataTransferObject;
 import org.startupframework.service.CRUDService;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 
 /**
  * Base Controller with Service.
- * 
- * GET (get a single item or a collection)
- * 
- * POST (add an item to a collection)
- * 
- * PUT (edit an item that already exists in a collection)
- * 
- * DELETE (delete an item in a collection)
  * 
  * @author Arq. Jesús Israel Anaya Salazar
  */
@@ -52,24 +42,24 @@ public abstract class CRUDControllerBase<DTO extends DataTransferObject, S exten
 
 	static final String ASSERT_SERVICE = "Should implements service for %s";
 
-	@Getter
-	final S service;
+	@Getter(value = AccessLevel.PROTECTED)
+	private final S service;
 
 	protected CRUDControllerBase(S service) {
 		assert service != null : String.format(ASSERT_SERVICE, this.getClass().getName());
 		this.service = service;
 	}
 
-	protected <T> void updateProperty(Supplier<T> source, Consumer<T> target) {
-		T value = source.get();
+	protected <P> void updateProperty(Supplier<P> source, Consumer<P> target) {
+		P value = source.get();
 		if (value != null)
 			target.accept(value);
 	}
 
 	abstract protected void updateProperties(DTO source, DTO target);
 
-	// -------------------Retrieve AllData----------------------
-	public @ResponseBody ResponseEntity<List<DTO>> getAllItems() {
+	@Override
+	public ResponseEntity<List<DTO>> getAllItems() {
 		List<DTO> data = service.findAll();
 
 		if (data.isEmpty()) {
@@ -79,31 +69,20 @@ public abstract class CRUDControllerBase<DTO extends DataTransferObject, S exten
 		}
 	}
 
-	// -------------------Retrieve AllData----------------------
-	public @ResponseBody ResponseEntity<List<DTO>> getAllActiveItems() {
-		List<DTO> data = service.findAllActives();
-
-		if (data.isEmpty()) {
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-		} else {
-			return new ResponseEntity<>(data, HttpStatus.OK);
-		}
-	}
-
-	// -------------------Retrieve Single----------------------
-	public @ResponseBody ResponseEntity<DTO> getItem(@PathVariable("id") String id) {
+	@Override
+	public ResponseEntity<DTO> getItem(String id) {
 		DTO item = service.findById(id);
 		return new ResponseEntity<>(item, HttpStatus.OK);
 	}
 
-	// -------------------Create a Item----------------------
-	public ResponseEntity<DTO> createItem(@RequestBody DTO item) {
+	@Override
+	public ResponseEntity<DTO> createItem(DTO item) {
 		DTO newItem = service.save(item);
 		return new ResponseEntity<>(newItem, HttpStatus.CREATED);
 	}
 
-	// ------------------- Update a Item----------------------
-	public ResponseEntity<DTO> updateItem(@RequestBody DTO item) {
+	@Override
+	public ResponseEntity<DTO> updateItem(DTO item) {
 		DTO currentItem = null;
 		currentItem = service.findById(item.getId());
 
@@ -111,5 +90,12 @@ public abstract class CRUDControllerBase<DTO extends DataTransferObject, S exten
 
 		DTO updatedItem = service.save(currentItem);
 		return new ResponseEntity<>(updatedItem, HttpStatus.OK);
+	}
+
+	@Override
+	public ResponseEntity<DTO> deleteItem(String id) {
+		DTO deleteItem = service.findById(id);
+		service.deleteById(id);
+		return new ResponseEntity<>(deleteItem, HttpStatus.OK);
 	}
 }
