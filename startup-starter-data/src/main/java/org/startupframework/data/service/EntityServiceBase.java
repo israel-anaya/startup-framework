@@ -47,6 +47,7 @@ import org.startupframework.exception.DataNotFoundException;
 import org.startupframework.exception.DuplicateDataException;
 import org.startupframework.validation.ObjectValidatorService;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 
 /**
@@ -61,8 +62,8 @@ public abstract class EntityServiceBase<R extends EntityRepository<E>, E extends
 	static final String ASSERT_REPOSITORY = "Should implements repository for %s";
 	static final String ID_NAME = "id";
 
-	@Getter
-	final R repository;
+	@Getter(value = AccessLevel.PROTECTED)
+	private final R repository;
 
 	@Autowired
 	private ApplicationContext applicationContext;

@@ -28,6 +28,7 @@ import org.startupframework.entity.Identifiable;
 import org.startupframework.exception.DataNotFoundException;
 import org.startupframework.exception.DuplicateDataException;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 
 /**
@@ -38,8 +39,8 @@ import lombok.Getter;
 public abstract class EntityServiceChildBase<R extends EntityRepository<E>, E extends Entity>
 		extends EntityServiceBase<R, E> implements EntityServiceChild<E> {
 
-	@Getter
-	boolean isAggregated;
+	@Getter(value = AccessLevel.PROTECTED)
+	private boolean isAggregated;
 
 	protected EntityServiceChildBase(final R repository, boolean isAggregated) {
 		super(repository);
