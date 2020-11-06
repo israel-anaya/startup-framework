@@ -89,6 +89,19 @@
 					<groupId>org.springframework.cloud</groupId>
 					<artifactId>spring-cloud-netflix-ribbon</artifactId>
 				</exclusion>
+				<!-- Exclude Jersey Communication --> 				
+		        <exclusion>
+		            <groupId>com.sun.jersey</groupId>
+		            <artifactId>jersey-client</artifactId>
+		        </exclusion>
+		        <exclusion>
+		            <groupId>com.sun.jersey</groupId>
+		            <artifactId>jersey-core</artifactId>
+		        </exclusion>
+		        <exclusion>
+		            <groupId>com.sun.jersey.contribs</groupId>
+		            <artifactId>jersey-apache-client4</artifactId>
+		        </exclusion>
 			</exclusions>
 		</dependency>
 		<!-- Config Client -->
