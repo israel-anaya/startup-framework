@@ -23,6 +23,7 @@ import org.startupframework.entity.ErrorInfo;
 import org.startupframework.exception.DataException;
 import org.startupframework.exception.DataNotFoundException;
 import org.startupframework.exception.DuplicateDataException;
+import org.startupframework.exception.ServiceUnavailableException;
 import org.startupframework.exception.StartupException;
 
 /**
@@ -41,7 +42,12 @@ public abstract class StartupEndpoint {
 	public ResponseEntity<ErrorInfo> handleException(StartupException ex) throws Exception {
 		return new ResponseEntity<ErrorInfo>(new ErrorInfo(ex), HttpStatus.CONFLICT);
 	}
-
+	
+	@ExceptionHandler(ServiceUnavailableException.class)
+	public ResponseEntity<ErrorInfo> handleException(ServiceUnavailableException ex) throws Exception {
+		return new ResponseEntity<ErrorInfo>(new ErrorInfo(ex), HttpStatus.SERVICE_UNAVAILABLE);
+	}
+	
 	@ExceptionHandler(DataException.class)
 	public ResponseEntity<ErrorInfo> handleException(DataException ex) throws Exception {
 		return new ResponseEntity<ErrorInfo>(new ErrorInfo(ex), HttpStatus.BAD_REQUEST);

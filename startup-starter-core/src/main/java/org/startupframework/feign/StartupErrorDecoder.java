@@ -25,6 +25,7 @@ import java.nio.charset.StandardCharsets;
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpStatus;
 import org.startupframework.entity.ErrorInfo;
+import org.startupframework.exception.ServiceUnavailableException;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -56,13 +57,18 @@ public class StartupErrorDecoder implements ErrorDecoder {
 
 	@Override
 	public Exception decode(String methodKey, Response response) {
+		Reader reader = null;
 
-		if (response.status() >= HttpStatus.BAD_REQUEST.value()) {
-			Reader reader = null;
+		try {
+			reader = response.body().asReader(StandardCharsets.UTF_8);
+			String result = IOUtils.toString(reader);
 
-			try {
-				reader = response.body().asReader(StandardCharsets.UTF_8);
-				String result = IOUtils.toString(reader);
+			if (response.status() == HttpStatus.SERVICE_UNAVAILABLE.value()) {
+				return new ServiceUnavailableException(result);
+			}
+
+			if (response.status() >= HttpStatus.BAD_REQUEST.value()) {
+
 				ObjectMapper mapper = new ObjectMapper();
 				mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
@@ -70,11 +76,11 @@ public class StartupErrorDecoder implements ErrorDecoder {
 
 				return createException(errorInfo);
 
-			} catch (FeignException | IOException | ClassNotFoundException | NoSuchMethodException | SecurityException
-					| InstantiationException | IllegalAccessException | IllegalArgumentException
-					| InvocationTargetException e) {
-				return e;
 			}
+		} catch (FeignException | IOException | ClassNotFoundException | NoSuchMethodException | SecurityException
+				| InstantiationException | IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException e) {
+			return e;
 		}
 
 		return errorDecoder.decode(methodKey, response);
