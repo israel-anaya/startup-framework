@@ -18,6 +18,12 @@ package org.startupframework.entity;
 
 import org.startupframework.exception.StartupErrorCode;
 import org.startupframework.exception.StartupException;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import java.time.Instant;
+import java.util.Date;
+
 import org.startupframework.exception.DataException;
 
 import lombok.Data;
@@ -28,28 +34,35 @@ import lombok.Data;
  */
 public @Data class ErrorInfo {
 
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+	Date timestamp;	
+	String exception;
+	String errorCode;
+	String errorMessage;
+
 	public ErrorInfo() {
+		timestamp = new Date(Instant.now().toEpochMilli());
 	}
 
 	public ErrorInfo(Exception ex) {
+		this();
 		this.exception = ex.getClass().getName();
 		this.errorMessage = ex.getMessage();
 	}
 
 	public ErrorInfo(StartupException ex) {
+		this();
 		this.exception = ex.getClass().getName();
-		this.errorCode = StartupErrorCode.getErrorCode(ex);
+		//this.errorCode = StartupErrorCode.getErrorCode(ex);
 		this.errorMessage = ex.getMessage();
 	}
 
 	public ErrorInfo(DataException ex) {
+		this();
 		this.exception = ex.getClass().getName();
 		this.errorCode = StartupErrorCode.getErrorCode(ex);
 		this.errorMessage = ex.getMessage();
 	}
 	
-	String exception;
-	String errorCode;
-	String errorMessage;
 
 }
