@@ -58,7 +58,6 @@ public class StartupErrorDecoder implements ErrorDecoder {
 	public Exception decode(String methodKey, Response response) {
 
 		if (response.status() >= HttpStatus.BAD_REQUEST.value()) {
-			// ErrorInfo errorInfo;
 			Reader reader = null;
 
 			try {
