@@ -14,16 +14,24 @@
  * limitations under the License.
  */
 
-package org.startupframework.adapter;
+package org.startupframework.service;
 
-import org.startupframework.dto.DataTransferObject;
-import org.startupframework.service.CRUDService;
+import java.util.List;
+
+import org.startupframework.entity.Identifiable;
 
 /**
- * Interface for Adapter.
+ * Child Service interface with DataTransferObject.
  *
  * @author Arq. Jesús Israel Anaya Salazar
  */
-public interface CRUDAdapter<DTO extends DataTransferObject> extends CRUDService<DTO> {
-		
+public interface CRUDChildService<DTO extends Identifiable<String>> {
+
+	abstract DTO save(String parentId, String childId, DTO dto);
+
+	abstract DTO findById(String parentId, String childId);
+
+	abstract List<DTO> findAll(String parentId);
+
+	abstract void deleteById(String parentId, String childId);
 }

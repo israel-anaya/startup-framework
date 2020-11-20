@@ -25,7 +25,7 @@ import org.startupframework.entity.Entity;
  *
  * @author Arq. Jesús Israel Anaya Salazar
  */
-public interface EntityServiceChild<E extends Entity> extends EntityService<E> {
+public interface EntityChildService<E extends Entity> extends EntityService<E> {
 	
 	abstract E save(String parentId, String childId, E entity);
 

@@ -21,15 +21,15 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.startupframework.dto.DataTransferObjectChild;
 
 /**
- * Controller for DataTransferObjects and inherited.
+ * CRUD Child Controller for DataTransferObjects.
  * 
  * GET (get a single item or a collection)
  * 
@@ -42,7 +42,7 @@ import org.startupframework.dto.DataTransferObjectChild;
  * @author Arq. Jesús Israel Anaya Salazar
  */
 
-public interface CRUDControllerChild<DTO extends DataTransferObjectChild> {
+public interface CRUDChildController<DTO extends DataTransferObjectChild> {
 
 	@GetMapping()
 	@ResponseBody
@@ -56,7 +56,7 @@ public interface CRUDControllerChild<DTO extends DataTransferObjectChild> {
 	@ResponseBody
 	ResponseEntity<DTO> createItem(@PathVariable("parentId") String parentId, @RequestBody DTO item);
 
-	@PatchMapping()
+	@PutMapping()
 	@ResponseBody
 	ResponseEntity<DTO> updateItem(@PathVariable("parentId") String parentId, @RequestBody DTO item);
 	

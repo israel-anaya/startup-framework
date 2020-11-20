@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.startupframework.feign.service;
+package org.startupframework.service.feign;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +22,6 @@ import java.util.List;
 import org.startupframework.dto.DTOConverter;
 import org.startupframework.dto.DataTransferObjectChild;
 import org.startupframework.exception.DataException;
-import org.startupframework.feign.CRUDFeignChild;
 import org.startupframework.validation.ObjectValidatorService;
 
 import lombok.AccessLevel;
@@ -32,17 +31,17 @@ import lombok.Getter;
  *
  * @author Arq. Jesús Israel Anaya Salazar
  */
-public abstract class CRUDFeignServiceChild<S extends DataTransferObjectChild, T extends DataTransferObjectChild, F extends CRUDFeignChild<S>>
-		implements ObjectValidatorService<T>, CRUDFeignChild<T> {
+public abstract class CRUDChildFeignBase<S extends DataTransferObjectChild, T extends DataTransferObjectChild>
+		implements ObjectValidatorService<T>, CRUDChildFeign<T> {
 
 	static final String ASSERT_SERVICE = "Should implements Feign client for %s";
 
-	DTOConverter<S, T> converter;
+	final DTOConverter<S, T> converter;
 
 	@Getter(value = AccessLevel.PROTECTED)
-	private final F feign;
+	private final CRUDChildFeign<S> feign;
 
-	protected CRUDFeignServiceChild(final F feign, DTOConverter<S, T> dataConverter) {
+	protected CRUDChildFeignBase(final CRUDChildFeign<S> feign, final DTOConverter<S, T> dataConverter) {
 		assert feign != null : String.format(ASSERT_SERVICE, this.getClass().getName());
 		this.feign = feign;
 		this.converter = dataConverter;
@@ -94,18 +93,18 @@ public abstract class CRUDFeignServiceChild<S extends DataTransferObjectChild, T
 	}
 
 	@Override
-	public T createItem(T item, String parentId) {
+	public T createItem(String parentId, T item) {
 		validateObject(item);
 		S source = toSource(item);
-		S result = getFeign().createItem(source, parentId);
+		S result = getFeign().createItem(parentId, source);
 		return toTarget(result);
 	}
 
 	@Override
-	public T updateItem(T item, String parentId) {
+	public T updateItem(String parentId, T item) {
 		validateObject(item);
 		S source = toSource(item);
-		S result = getFeign().updateItem(source, parentId);
+		S result = getFeign().updateItem(parentId, source);
 		return toTarget(result);
 	}
 

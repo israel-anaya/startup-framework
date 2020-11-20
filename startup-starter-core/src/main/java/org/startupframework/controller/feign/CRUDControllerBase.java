@@ -26,13 +26,13 @@ import org.startupframework.controller.CRUDController;
 import org.startupframework.controller.StartupController;
 import org.startupframework.controller.StartupEndpoint;
 import org.startupframework.dto.DataTransferObject;
-import org.startupframework.feign.CRUDFeign;
+import org.startupframework.service.feign.CRUDFeign;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 
 /**
- * Base Controller with Service.
+ * Base Controller with Feign.
  * 
  * @author Arq. Jesús Israel Anaya Salazar
  */
@@ -83,7 +83,12 @@ public abstract class CRUDControllerBase<DTO extends DataTransferObject, F exten
 
 	@Override
 	public ResponseEntity<DTO> updateItem(DTO item) {
-		DTO updatedItem = feign.updateItem(item);
+		DTO currentItem = null;
+		currentItem = feign.getItem(item.getId());
+
+		updateProperties(item, currentItem);
+		
+		DTO updatedItem = feign.updateItem(currentItem);
 		return new ResponseEntity<>(updatedItem, HttpStatus.OK);
 	}
 

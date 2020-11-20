@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.startupframework.controller.adapter;
+package org.startupframework.controller.feign;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -22,32 +22,32 @@ import java.util.function.Supplier;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.startupframework.adapter.CRUDAdapter;
-import org.startupframework.controller.CRUDController;
+import org.startupframework.controller.CRUDChildController;
 import org.startupframework.controller.StartupController;
 import org.startupframework.controller.StartupEndpoint;
-import org.startupframework.dto.DataTransferObject;
+import org.startupframework.dto.DataTransferObjectChild;
+import org.startupframework.service.feign.CRUDChildFeign;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 
 /**
- * Base Controller with Adapter.
+ * Base Child Controller with Feign.
  * 
  * @author Arq. Jesús Israel Anaya Salazar
  */
 @StartupController
-public abstract class CRUDControllerBase<DTO extends DataTransferObject, AD extends CRUDAdapter<DTO>> extends StartupEndpoint
-		implements CRUDController<DTO> {
+public abstract class CRUDChildControllerBase<DTO extends DataTransferObjectChild, F extends CRUDChildFeign<DTO>>
+		extends StartupEndpoint implements CRUDChildController<DTO> {
 
-	static final String ASSERT_SERVICE = "Should implements adapter for %s";
+	static final String ASSERT_SERVICE = "Should implements Feign client for %s";
 
 	@Getter(value = AccessLevel.PROTECTED)
-	private final AD adapter;
+	private final F feign;
 
-	protected CRUDControllerBase(AD adapter) {
-		assert adapter != null : String.format(ASSERT_SERVICE, this.getClass().getName());
-		this.adapter = adapter;
+	protected CRUDChildControllerBase(F feign) {
+		assert feign != null : String.format(ASSERT_SERVICE, this.getClass().getName());
+		this.feign = feign;
 	}
 
 	protected <P> void updateProperty(Supplier<P> source, Consumer<P> target) {
@@ -59,8 +59,8 @@ public abstract class CRUDControllerBase<DTO extends DataTransferObject, AD exte
 	abstract protected void updateProperties(DTO source, DTO target);
 
 	@Override
-	public ResponseEntity<List<DTO>> getAllItems() {
-		List<DTO> data = adapter.findAll();
+	public ResponseEntity<List<DTO>> getAllItems(String parentId) {
+		List<DTO> data = feign.getAllItems(parentId);
 
 		if (data.isEmpty()) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -70,32 +70,31 @@ public abstract class CRUDControllerBase<DTO extends DataTransferObject, AD exte
 	}
 
 	@Override
-	public ResponseEntity<DTO> getItem(String id) {
-		DTO item = adapter.findById(id);
+	public ResponseEntity<DTO> getItem(String parentId, String childId) {
+		DTO item = feign.getItem(parentId, childId);
 		return new ResponseEntity<>(item, HttpStatus.OK);
 	}
 
 	@Override
-	public ResponseEntity<DTO> createItem(DTO item) {
-		DTO newItem = adapter.save(item);
+	public ResponseEntity<DTO> createItem(String parentId, DTO item) {
+		DTO newItem = feign.createItem(parentId, item);
 		return new ResponseEntity<>(newItem, HttpStatus.CREATED);
 	}
 
 	@Override
-	public ResponseEntity<DTO> updateItem(DTO item) {
+	public ResponseEntity<DTO> updateItem(String parentId, DTO item) {
 		DTO currentItem = null;
-		currentItem = adapter.findById(item.getId());
+		currentItem = feign.getItem(parentId, item.getChildId());
 
 		updateProperties(item, currentItem);
-
-		DTO updatedItem = adapter.save(currentItem);
+		
+		DTO updatedItem = feign.updateItem(parentId, currentItem);
 		return new ResponseEntity<>(updatedItem, HttpStatus.OK);
 	}
 
 	@Override
-	public ResponseEntity<DTO> deleteItem(String id) {
-		DTO deleteItem = adapter.findById(id);
-		adapter.deleteById(id);
+	public ResponseEntity<DTO> deleteItem(String parentId, String childId) {
+		DTO deleteItem = feign.deleteItem(parentId, childId);
 		return new ResponseEntity<>(deleteItem, HttpStatus.OK);
 	}
 

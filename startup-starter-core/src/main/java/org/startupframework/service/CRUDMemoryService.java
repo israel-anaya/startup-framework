@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.startupframework.adapter;
+package org.startupframework.service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +28,9 @@ import org.startupframework.dto.DataTransferObject;
  *
  * @author Arq. Jesús Israel Anaya Salazar
  */
-public class MemoryAdapter<DTO extends DataTransferObject> implements CRUDAdapter<DTO> {
+public class CRUDMemoryService<DTO extends DataTransferObject> implements CRUDService<DTO> {
 
-	public MemoryAdapter() {
+	public CRUDMemoryService() {
 
 	}
 

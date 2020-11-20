@@ -16,62 +16,54 @@
 
 package org.startupframework.data.adapter;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.startupframework.adapter.CRUDAdapter;
 import org.startupframework.data.entity.DataConverter;
 import org.startupframework.data.service.EntityService;
 import org.startupframework.dto.EntityDTO;
 import org.startupframework.entity.Entity;
-import org.startupframework.exception.DataNotFoundException;
+import org.startupframework.exception.DataException;
+import org.startupframework.validation.ObjectValidatorService;
+
+import lombok.AccessLevel;
+import lombok.Getter;
 
 /**
  *
  * @author Arq. Jesús Israel Anaya Salazar
  */
 public abstract class EntityServiceAdapter<DTO extends EntityDTO, E extends Entity, S extends EntityService<E>>
-		extends EntityServiceAdapterBase<DTO, E, S> implements CRUDAdapter<DTO> {
+		implements ObjectValidatorService<DTO> {
 
-	protected EntityServiceAdapter(final S service, DataConverter<DTO, E> dataConverter) {
-		super(service, dataConverter);
-	}
-	
-	@Override
-	public DTO save(DTO dto) {
-		validateObject(dto);
-		E entity = toEntity(dto);
-		E result = getService().save(entity);
-		return toDataTransferObject(result);
+	static final String ASSERT_SERVICE = "Should implements service for %s";
+
+	final DataConverter<DTO, E> dataConverter;
+
+	@Getter(value = AccessLevel.PROTECTED)
+	private final S service;
+
+	protected EntityServiceAdapter(final S service, final DataConverter<DTO, E> dataConverter) {
+		assert service != null : String.format(ASSERT_SERVICE, this.getClass().getName());
+		this.service = service;
+		this.dataConverter = dataConverter;
 	}
 
-	@Override
-	public DTO findById(String id) {
-		E foundItem = getService().findById(id);
-		if (foundItem == null) {
-			throw DataNotFoundException.fromId(id);
+	protected E toEntity(DTO dto) {
+		try {
+			return dataConverter.toEntity(dto);
+		} catch (Exception ex) {
+			throw new DataException(ex);
 		}
-		return toDataTransferObject(foundItem);
 	}
 
-	@Override
-	public boolean existsById(String id) {
-		return getService().existsById(id);
-	}
-
-	@Override
-	public List<DTO> findAll() {
-		ArrayList<DTO> data = new ArrayList<>();
-
-		List<E> entities = getService().findAll();
-		for (E entity : entities) {
-			data.add(toDataTransferObject(entity));
+	protected DTO toDataTransferObject(E entity) {
+		try {
+			return dataConverter.toDataTransferObject(entity);
+		} catch (Exception ex) {
+			throw new DataException(ex);
 		}
-		return data;
 	}
 
 	@Override
-	public void deleteById(String id) {
-		getService().deleteById(id);
+	public void validateObject(DTO dto) {
+		validateObjectConstraints(dto);
 	}
 }

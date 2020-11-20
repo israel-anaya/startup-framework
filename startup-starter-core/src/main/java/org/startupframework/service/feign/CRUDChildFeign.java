@@ -14,16 +14,27 @@
  * limitations under the License.
  */
 
-package org.startupframework.adapter;
+package org.startupframework.service.feign;
+
+import java.util.List;
 
 import org.startupframework.dto.DataTransferObjectChild;
-import org.startupframework.service.CRUDServiceChild;
 
 /**
- * Service interface for ChildAdapter.
  *
  * @author Arq. Jesús Israel Anaya Salazar
  */
-public interface CRUDAdapterChild<DTO extends DataTransferObjectChild> extends CRUDServiceChild<DTO> {
+
+public interface CRUDChildFeign<DTO extends DataTransferObjectChild> {
+
+	List<DTO> getAllItems(String parentId);
+
+	DTO getItem(String parentId, String childId);
+
+	DTO createItem(String parentId, DTO item);
+
+	DTO updateItem(String parentId, DTO item);
+
+	DTO deleteItem(String parentId, String childId);
 
 }

@@ -22,11 +22,11 @@ import java.util.function.Supplier;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.startupframework.controller.CRUDControllerChild;
+import org.startupframework.controller.CRUDChildController;
 import org.startupframework.controller.StartupController;
 import org.startupframework.controller.StartupEndpoint;
 import org.startupframework.dto.DataTransferObjectChild;
-import org.startupframework.service.CRUDServiceChild;
+import org.startupframework.service.CRUDChildService;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -37,15 +37,15 @@ import lombok.Getter;
  * @author Arq. Jesús Israel Anaya Salazar
  */
 @StartupController
-public abstract class CRUDControllerChildBase<DTO extends DataTransferObjectChild, S extends CRUDServiceChild<DTO>>
-		extends StartupEndpoint implements CRUDControllerChild<DTO> {
+public abstract class CRUDChildControllerBase<DTO extends DataTransferObjectChild, S extends CRUDChildService<DTO>>
+		extends StartupEndpoint implements CRUDChildController<DTO> {
 
 	static final String ASSERT_SERVICE = "Should implements service for %s";
 
 	@Getter(value = AccessLevel.PROTECTED)
 	private final S service;
 
-	protected CRUDControllerChildBase(S service) {
+	protected CRUDChildControllerBase(S service) {
 		assert service != null : String.format(ASSERT_SERVICE, this.getClass().getName());
 		this.service = service;
 	}

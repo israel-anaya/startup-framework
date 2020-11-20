@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.startupframework.feign.service;
+package org.startupframework.service.feign;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +22,6 @@ import java.util.List;
 import org.startupframework.dto.DTOConverter;
 import org.startupframework.dto.DataTransferObject;
 import org.startupframework.exception.DataException;
-import org.startupframework.feign.CRUDFeign;
 import org.startupframework.validation.ObjectValidatorService;
 
 import lombok.AccessLevel;
@@ -32,17 +31,17 @@ import lombok.Getter;
  *
  * @author Arq. Jesús Israel Anaya Salazar
  */
-public abstract class CRUDFeignService<S extends DataTransferObject, T extends DataTransferObject, F extends CRUDFeign<S>>
+public abstract class CRUDFeignBase<S extends DataTransferObject, T extends DataTransferObject>
 		implements ObjectValidatorService<T>, CRUDFeign<T> {
 
 	static final String ASSERT_SERVICE = "Should implements Feign client for %s";
 
-	DTOConverter<S, T> converter;
+	final DTOConverter<S, T> converter;
 
 	@Getter(value = AccessLevel.PROTECTED)
-	private final F feign;
+	private final CRUDFeign<S> feign;
 
-	protected CRUDFeignService(final F feign, DTOConverter<S, T> dataConverter) {
+	protected CRUDFeignBase(final CRUDFeign<S> feign, final DTOConverter<S, T> dataConverter) {
 		assert feign != null : String.format(ASSERT_SERVICE, this.getClass().getName());
 		this.feign = feign;
 		this.converter = dataConverter;

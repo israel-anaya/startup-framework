@@ -14,46 +14,27 @@
  * limitations under the License.
  */
 
-package org.startupframework.feign;
+package org.startupframework.service.feign;
 
 import java.util.List;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.startupframework.dto.DataTransferObject;
 
 /**
- * RestController for DataTransferObjects and inherited.
- * 
- * GET (get a single item or a collection)
- * 
- * POST (add an item to a collection)
- * 
- * PUT (edit an item that already exists in a collection)
- * 
- * DELETE (delete an item in a collection)
- * 
- * @author Arq. Jesús Israel Anaya Salazar
- */
+*
+* @author Arq. Jesús Israel Anaya Salazar
+*/
 
 public interface CRUDFeign<DTO extends DataTransferObject> {
 
-	@GetMapping()
 	List<DTO> getAllItems();
 	
-	@GetMapping("/{id}")
-	DTO getItem(@PathVariable("id") String id);
+	DTO getItem(String id);
 
-	@PostMapping()
 	DTO createItem(DTO item);
 
-	@PatchMapping()
 	DTO updateItem(DTO item);
 	
-	@DeleteMapping("/{id}")
-	DTO deleteItem(@PathVariable("id") String id);
+	DTO deleteItem(String id);
 	
 }
