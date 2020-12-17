@@ -28,6 +28,10 @@
 	<description>Microservice Parent Startup Framework for Java Microservices based on SPRING®</description>
 	<url>http://startupframework.org</url>
 	
+	<properties>
+		<image.registry>startup</image.registry>
+	</properties>
+	
 	<licenses>
 		<license>
 			<name>Apache License, Version 2.0</name>
@@ -206,11 +210,11 @@
 			<plugin>
 				<groupId>org.eclipse.jkube</groupId>
 				<artifactId>kubernetes-maven-plugin</artifactId>
-				<version>1.0.0-rc-1</version>
+				<version>1.0.2</version>
 				<configuration>
 					<images>
 						<image>
-							<name>startupframework/${project.artifactId}:${project.version}</name>
+							<name>${image.registry}/${project.artifactId}:${project.version}</name>
 							<alias>${project.artifactId}</alias>
 							<build>								
 								<dockerFile>${project.basedir}/src/main/docker/Dockerfile</dockerFile>								
