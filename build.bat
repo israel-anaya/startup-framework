@@ -1,6 +1,6 @@
 echo OFF
 echo -----------------------------------------------------------------
-echo Samples Startup Framework
+echo Startup Framework
 echo -----------------------------------------------------------------
 
 call mvn -f startup-starter-parent/pom.xml clean install
