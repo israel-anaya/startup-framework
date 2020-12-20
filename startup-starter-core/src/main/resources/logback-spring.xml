@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-	<include resource="org/springframework/boot/logging/logback/base.xml" />
+	<springProperty scope="context" name="APPLICATION_NAME" source="spring.application.name"/>
+	<property name="LOG_FILE" value="${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}}/${APPLICATION_NAME:-service}.log}"/>
 
-	<property name="MS_LOG_FILE" value="${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}}/microservice.log" />
-	<property name="MS_LOG_FILE_GZ" value="${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}}/microservice.log-%d{yyyy-MM-dd}.gz" />
+	<include resource="org/springframework/boot/logging/logback/base.xml" />
+	
+	<property name="MS_LOG_FILE" value="${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}}/${APPLICATION_NAME:-service}-ms.log}" />
+	<property name="MS_LOG_FILE_GZ" value="${MS_LOG_FILE}.%d{yyyy-MM-dd}.gz}" />
 
 	<property name="MS_FILE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p : %m%n%wEx" />
 
@@ -22,6 +25,7 @@
 			<!-- daily rollover -->
 			<fileNamePattern>${MS_LOG_FILE_GZ}</fileNamePattern>
 			<maxHistory>${LOG_FILE_MAX_HISTORY:-7}</maxHistory>
+	
 			
 		</rollingPolicy>
 
