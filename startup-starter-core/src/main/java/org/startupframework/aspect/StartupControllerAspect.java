@@ -16,24 +16,16 @@
 
 package org.startupframework.aspect;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -41,6 +33,9 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.startupframework.config.StartupProperties;
 import org.startupframework.exception.DataException;
+import org.startupframework.log.HttpHeadersHelper;
+import org.startupframework.log.HttpLoggerData;
+import org.startupframework.log.HttpServiceLogger;
 
 /**
  * Startup Controller Aspect.
@@ -53,21 +48,12 @@ public class StartupControllerAspect {
 
 	static Logger log = LoggerFactory.getLogger("MICROSERVICE");
 
-	@Value("${spring.application.name}")
-	String serviceId;
-
-	@Autowired
 	private StartupProperties properties;
+	HttpServiceLogger httpServiceLogger;
 
-	private HttpHeaders getHeades(HttpServletRequest request) {
-
-		Stream<String> buffer = Collections.list(request.getHeaderNames()).stream();
-		Collector<String, ?, HttpHeaders> collector = Collectors.toMap(Function.identity(),
-				h -> Collections.list(request.getHeaders(h)), (oldValue, newValue) -> newValue, HttpHeaders::new);
-
-		HttpHeaders httpHeaders = buffer.collect(collector);
-
-		return httpHeaders;
+	public StartupControllerAspect(StartupProperties properties, HttpServiceLogger httpServiceLogger) {
+		this.properties = properties;
+		this.httpServiceLogger = httpServiceLogger;
 	}
 
 	void throwRequiredHeader(String headerName) {
@@ -85,46 +71,44 @@ public class StartupControllerAspect {
 		}
 	}
 
-	private String formatHeaders(HttpHeaders httpHeaders) {
-		List<String> logHeaders = properties.getHeaders().getLogger();
-
-		Predicate<Entry<String, List<String>>> predicate = e -> logHeaders.contains(e.getKey().toLowerCase());
-		Stream<Entry<String, List<String>>> stream = httpHeaders.entrySet().stream().filter(predicate);
-		String buffer = stream.map(e -> e.getKey() + ":" + e.getValue()).collect(Collectors.joining(", "));
-
-		return buffer;
-	}
-
 	@Around("@within(org.startupframework.controller.StartupController)")
 	protected Object aroundExecution(ProceedingJoinPoint joinPoint) throws Throwable {
 		long start = System.currentTimeMillis();
 
 		ServletRequestAttributes servlet = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
 		HttpServletRequest request = servlet.getRequest();
-		HttpHeaders httpHeaders = getHeades(request);
-		String headers = formatHeaders(httpHeaders);
-		String method = request.getMethod();
-		String url = request.getRequestURI();
-		
+		HttpServletResponse response = servlet.getResponse();
+
+		HttpHeaders requestHeaders = HttpHeadersHelper.getHttRequestHeaders(request);
+		HttpLoggerData httpLoggerData = httpServiceLogger.prepareData("Start", request, requestHeaders);
+
 		try {
-			validateHeaders(httpHeaders);
 
+			validateHeaders(requestHeaders);
 
-			log.info("ServiceId:{}, Event:Start, Method:{}, URL:{}, {}", serviceId, method, url, headers);
+			httpServiceLogger.LogEvent(httpLoggerData);
 
 			Object proceed = joinPoint.proceed();
+			long elapsedTime = System.currentTimeMillis() - start;
 
-			long executionTime = System.currentTimeMillis() - start;
+			HttpHeaders responseHeaders = HttpHeadersHelper.getHttResponseHeaders(response);
+			httpLoggerData.setEventType("End");
+			httpLoggerData.getResponse().setHeaders(responseHeaders);
+			httpLoggerData.getResponse().setElapsedTime(elapsedTime);
+			httpServiceLogger.LogEvent(httpLoggerData);
 
-			log.info("ServiceId:{}, Event:End, Method:{}, URL:{}, {}, Time:{}ms", serviceId, method, url, headers,
-					executionTime);
-			
-			return proceed;			
+			return proceed;
 		} catch (Throwable ex) {
-			log.warn("ServiceId:{}, Event:Exception, Method:{}, URL:{}, Error:{}", serviceId, method, url, ex.getMessage());
+			long elapsedTime = System.currentTimeMillis() - start;
+			HttpHeaders responseHeaders = HttpHeadersHelper.getHttResponseHeaders(response);			
+			httpLoggerData.setEventType("Error");
+			httpLoggerData.getResponse().setHeaders(responseHeaders);
+			httpLoggerData.getResponse().setElapsedTime(elapsedTime);
+			httpLoggerData.getResponse().setError(ex.getMessage());
+			httpServiceLogger.WarnEvent(httpLoggerData);
+
 			ex.printStackTrace();
 			throw ex;
-				
 		}
 
 	}

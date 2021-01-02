@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-	<springProperty scope="context" name="APPLICATION_NAME" source="spring.application.name"/>
-	<property name="LOG_FILE" value="${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}}/${APPLICATION_NAME:-service}.log}"/>
+	<springProperty scope="context" name="APPLICATION_NAME" source="spring.application.name" />
+	<property name="LOG_FILE" value="${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}}/${APPLICATION_NAME:-service}.log}" />
 
 	<include resource="org/springframework/boot/logging/logback/base.xml" />
-	
+
 	<property name="MS_LOG_FILE" value="${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}}/${APPLICATION_NAME:-service}-ms.log}" />
 	<property name="MS_LOG_FILE_GZ" value="${MS_LOG_FILE}.%d{yyyy-MM-dd}.gz}" />
 
@@ -14,19 +14,41 @@
 	<appender name="MS_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
 
 		<file>${MS_LOG_FILE}</file>
-		
-		<encoder>
-			<pattern>${MS_FILE_LOG_PATTERN}</pattern>		
+
+		<!--<encoder> <pattern>${MS_FILE_LOG_PATTERN}</pattern> </encoder> -->
+
+		<encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+			<!-- <jsonFactoryDecorator class="net.logstash.logback.decorate.CharacterEscapesJsonFactoryDecorator"> <includeStandardAsciiEscapesForJSON>false</includeStandardAsciiEscapesForJSON> 
+				</jsonFactoryDecorator> -->
+			<providers>
+				<timestamp>
+					<timeZone>UTC</timeZone>
+				</timestamp>
+
+				<pattern>
+					<pattern>
+						{
+						"svc.log.level": "%level",
+						"svc.id": "${APPLICATION_NAME:-}"
+						}
+					</pattern>
+				</pattern>
+				<mdc />
+				<!-- StructuredArgument and Marker support -->
+				<arguments />
+				<logstashMarkers />
+
+			</providers>
 		</encoder>
-		
+
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 
 			<cleanHistoryOnStart>${LOG_FILE_CLEAN_HISTORY_ON_START:-false}</cleanHistoryOnStart>
 			<!-- daily rollover -->
 			<fileNamePattern>${MS_LOG_FILE_GZ}</fileNamePattern>
 			<maxHistory>${LOG_FILE_MAX_HISTORY:-7}</maxHistory>
-	
-			
+
+
 		</rollingPolicy>
 
 
@@ -35,6 +57,7 @@
 	<logger name="MICROSERVICE" additivity="false">
 		<appender-ref ref="CONSOLE" />
 		<appender-ref ref="MS_FILE" />
+
 	</logger>
 
 </configuration>

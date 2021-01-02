@@ -21,6 +21,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.startupframework.aspect.StartupControllerAspect;
+import org.startupframework.log.HttpServiceLogger;
+import org.startupframework.log.HttpServiceLoggerDefault;
 import org.startupframework.validation.ObjectValidator;
 
 /**
@@ -37,7 +39,12 @@ public class StartupAutoConfiguration {
 
 	@Bean
 	StartupControllerAspect startupControllerAspect() {
-		return new StartupControllerAspect();
+		return new StartupControllerAspect(properties, httpServiceLogger());
+	}
+
+	@Bean
+	HttpServiceLogger httpServiceLogger() {
+		return new HttpServiceLoggerDefault(properties);
 	}
 
 	@Bean
