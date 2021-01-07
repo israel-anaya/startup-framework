@@ -66,6 +66,12 @@
 			<artifactId>startup-starter-core</artifactId>
 			<version>1.0.2.RELEASE</version>
 		</dependency>
+		<!-- Getters y Setters -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<scope>provided</scope>
+		</dependency>
 		<!-- Persistencia a DB -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
