@@ -1,23 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--  
- *
- * Copyright 2019-2020 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<!-- * * Copyright 2019-2020 the original author or authors. * * Licensed under the Apache License, Version 2.0 (the "License"); * you may not use this 
+	file except in compliance with the License. * You may obtain a copy of the License at * * https://www.apache.org/licenses/LICENSE-2.0 * * Unless required 
+	by applicable law or agreed to in writing, software * distributed under the License is distributed on an "AS IS" BASIS, * WITHOUT WARRANTIES OR CONDITIONS 
+	OF ANY KIND, either express or implied. * See the License for the specific language governing permissions and * limitations under the License. * -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
@@ -25,9 +11,9 @@
 	<packaging>jar</packaging>
 
 	<name>${project.groupId}:${project.artifactId}</name>
-	<description>Core Startup Framework for Java Microservices Architecture based on SPRING®</description>
+	<description>Commons Startup Framework for Java Microservices Architecture based on SPRING®</description>
 	<url>http://startupframework.org</url>
-	
+
 	<licenses>
 		<license>
 			<name>Apache License, Version 2.0</name>
@@ -43,19 +29,19 @@
 			<organizationUrl>https://github.com/israel-anaya</organizationUrl>
 		</developer>
 	</developers>
-	
+
 	<scm>
-  		<connection>scm:git:git://github.com/israel-anaya/startup-framework.git</connection>
-  		<developerConnection>scm:git:ssh://github.com:israel-anaya/startup-framework.git</developerConnection>
-  		<url>https://github.com/israel-anaya/startup-framework.git</url>
+		<connection>scm:git:git://github.com/israel-anaya/startup-framework.git</connection>
+		<developerConnection>scm:git:ssh://github.com:israel-anaya/startup-framework.git</developerConnection>
+		<url>https://github.com/israel-anaya/startup-framework.git</url>
 	</scm>
-	
+
 	<parent>
 		<groupId>org.startupframework</groupId>
 		<artifactId>startup-starter-parent</artifactId>
 		<version>1.0.2.RELEASE</version>
 	</parent>
-	
+
 	<dependencies>
 		<!-- Getters y Setters -->
 		<dependency>
@@ -63,70 +49,45 @@
 			<artifactId>lombok</artifactId>
 			<scope>provided</scope>
 		</dependency>
-		<!-- Fasterxml -->		
+		<!-- Fasterxml -->
 		<dependency>
-		    <groupId>org.springframework.boot</groupId>
-		    <artifactId>spring-boot-starter-json</artifactId>
-		</dependency>	
-		<!-- Autoconfigure -->		
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-json</artifactId>
+		</dependency>
+		<!-- Autoconfigure -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-autoconfigure</artifactId>
 		</dependency>
-		<!-- Aspects -->		
-	    <dependency>
-	        <groupId>org.springframework.boot</groupId>
-	        <artifactId>spring-boot-starter-aop</artifactId>
-	    </dependency>
-		<!-- Security -->
+		<!-- Aspects -->
 		<dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-web</artifactId>
-        </dependency>
-        <dependency>
-        	<groupId>org.springframework.security</groupId>
-        	<artifactId>spring-security-config</artifactId>
-    	</dependency>			
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-oauth2-jose</artifactId>			
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-aop</artifactId>
 		</dependency>
-		<!-- Http API Client -->		
+		<!-- Http API Client -->
 		<dependency>
-		    <groupId>javax.servlet</groupId>
-		    <artifactId>javax.servlet-api</artifactId>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
 		</dependency>
-		<!-- Feign -->
-		<dependency>	
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-openfeign</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework.cloud</groupId>
-					<artifactId>spring-cloud-netflix-ribbon</artifactId>
-				</exclusion>
-			</exclusions>		
-		</dependency>  
+		<!-- Logstash -->
+		<dependency>
+			<groupId>net.logstash.logback</groupId>
+			<artifactId>logstash-logback-encoder</artifactId>
+			<version>6.5</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-access</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-configuration-processor</artifactId>
 			<optional>true</optional>
 		</dependency>
-		<!-- Logstash -->
-		<dependency>
-    		<groupId>net.logstash.logback</groupId>
-    		<artifactId>logstash-logback-encoder</artifactId>
-    		<version>6.5</version>
-		</dependency>
-		<dependency>
-    		<groupId>ch.qos.logback</groupId>
-    		<artifactId>logback-classic</artifactId>
-		</dependency>
-		<dependency>
-    		<groupId>ch.qos.logback</groupId>
-    		<artifactId>logback-access</artifactId>
-		</dependency>
-		
 	</dependencies>
 
 	<build>

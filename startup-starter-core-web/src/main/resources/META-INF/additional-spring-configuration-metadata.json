@@ -1,0 +1,17 @@
+{"properties": [
+  {
+    "name": "startup.dependencies",
+    "type": "java.lang.String",
+    "description": "Services dependencies"
+  },
+  {
+    "name": "startup.headers.logger",
+    "type": "java.lang.String",
+    "description": "HTTP Header to logger"
+  },
+  {
+    "name": "startup.headers.required",
+    "type": "java.lang.String",
+    "description": "Required HTTP headers"
+  }
+]}
