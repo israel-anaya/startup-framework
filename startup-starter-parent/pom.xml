@@ -16,8 +16,7 @@
  * limitations under the License.
  *
  -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
@@ -29,7 +28,7 @@
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>Parent Startup Framework for Java Microservices Architecture based on SPRING®</description>
 	<url>http://startupframework.org</url>
-	
+
 	<licenses>
 		<license>
 			<name>Apache License, Version 2.0</name>
@@ -45,12 +44,12 @@
 			<organizationUrl>https://github.com/israel-anaya</organizationUrl>
 		</developer>
 	</developers>
-	
+
 	<scm>
-  		<connection>scm:git:git://github.com/israel-anaya/startup-framework.git</connection>
-  		<developerConnection>scm:git:ssh://github.com:israel-anaya/startup-framework.git</developerConnection>
-  		<url>https://github.com/israel-anaya/startup-framework.git</url>
-	</scm>		
+		<connection>scm:git:git://github.com/israel-anaya/startup-framework.git</connection>
+		<developerConnection>scm:git:ssh://github.com:israel-anaya/startup-framework.git</developerConnection>
+		<url>https://github.com/israel-anaya/startup-framework.git</url>
+	</scm>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -78,6 +77,11 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
+		<!-- Prometheus Metrics -->
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-registry-prometheus</artifactId>
+		</dependency>
 		<!-- Bean Validation -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -91,7 +95,7 @@
 			<exclusions>
 				<exclusion>
 					<groupId>junit</groupId>
-        			<artifactId>junit</artifactId>
+					<artifactId>junit</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>org.junit.vintage</groupId>
@@ -100,9 +104,9 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-    		<groupId>io.rest-assured</groupId>
-      		<artifactId>rest-assured</artifactId>
-      		<scope>test</scope>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>rest-assured</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
@@ -112,8 +116,8 @@
 			<name>Spring Milestones</name>
 			<url>https://repo.spring.io/milestone</url>
 		</repository>
-	</repositories>	
-	
+	</repositories>
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -122,8 +126,8 @@
 				<version>${spring-cloud.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
-			</dependency>			
-		</dependencies>		
+			</dependency>
+		</dependencies>
 	</dependencyManagement>
 
 	<distributionManagement>
