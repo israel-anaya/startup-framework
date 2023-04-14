@@ -24,6 +24,7 @@ import org.springframework.security.config.annotation.web.configurers.Expression
  *
  * @author Arq. Jesús Israel Anaya Salazar
  */
+/*
 public class CustomizerAntMatchers {
 
 	ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry customizer;
@@ -48,3 +49,4 @@ public class CustomizerAntMatchers {
 	}
 
 }
+*/

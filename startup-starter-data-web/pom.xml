@@ -23,17 +23,21 @@
 	<artifactId>startup-starter-data-web</artifactId>
 	<packaging>jar</packaging>
 
+	<parent>
+		<groupId>org.startupframework</groupId>
+		<artifactId>spring-boot-parent</artifactId>
+		<version>2.0.0-SNAPSHOT</version>
+	</parent>
+
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>Data Startup Framework for Java Microservices Architecture based on SPRING®</description>
 	<url>http://startupframework.org</url>
-
 	<licenses>
 		<license>
 			<name>Apache License, Version 2.0</name>
 			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
 		</license>
 	</licenses>
-
 	<developers>
 		<developer>
 			<name>Jesus Israel Anaya Salazar</name>
@@ -42,18 +46,11 @@
 			<organizationUrl>https://github.com/israel-anaya</organizationUrl>
 		</developer>
 	</developers>
-
 	<scm>
 		<connection>scm:git:git://github.com/israel-anaya/startup-framework.git</connection>
 		<developerConnection>scm:git:ssh://github.com:israel-anaya/startup-framework.git</developerConnection>
 		<url>https://github.com/israel-anaya/startup-framework.git</url>
 	</scm>
-
-	<parent>
-		<groupId>org.startupframework</groupId>
-		<artifactId>startup-starter-parent</artifactId>
-		<version>1.0.2.RELEASE</version>
-	</parent>
 
 	<properties>
 		<m2e.apt.activation>jdt_apt</m2e.apt.activation>
@@ -64,7 +61,7 @@
 		<dependency>
 			<groupId>org.startupframework</groupId>
 			<artifactId>startup-starter-core-web</artifactId>
-			<version>1.0.2.RELEASE</version>
+			<version>${startup-version}</version>
 		</dependency>
 		<!-- Getters y Setters -->
 		<dependency>
@@ -79,7 +76,7 @@
 		</dependency>
 		<!-- Preprocesador de metamodelo jpa para consultas seguras -->
 		<dependency>
-			<groupId>org.hibernate</groupId>
+			<groupId>org.hibernate.orm</groupId>
 			<artifactId>hibernate-jpamodelgen</artifactId>
 		</dependency>
 	</dependencies>
@@ -87,69 +84,12 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
+				<groupId>org.springframework.boot</groupId>
+        		<artifactId>spring-boot-maven-plugin</artifactId>
+        		<version>${spring-boot.version}</version>
 			</plugin>
 		</plugins>
 	</build>
 
-	<profiles>
-		<profile>
-			<id>release</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.sonatype.plugins</groupId>
-						<artifactId>nexus-staging-maven-plugin</artifactId>
-						<version>1.6.7</version>
-						<extensions>true</extensions>
-						<configuration>
-							<serverId>ossrh</serverId>
-							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
-							<autoReleaseAfterClose>true</autoReleaseAfterClose>
-						</configuration>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-source-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>attach-sources</id>
-								<goals>
-									<goal>jar-no-fork</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-javadoc-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>attach-javadocs</id>
-								<goals>
-									<goal>jar</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-gpg-plugin</artifactId>
-						<version>1.5</version>
-						<executions>
-							<execution>
-								<id>sign-artifacts</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>sign</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 
 </project>

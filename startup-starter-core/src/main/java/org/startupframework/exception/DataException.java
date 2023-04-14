@@ -16,7 +16,7 @@
 
 package org.startupframework.exception;
 
-import javax.validation.ValidationException;
+import jakarta.validation.ValidationException;
 
 /**
 *

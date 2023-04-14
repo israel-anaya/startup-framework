@@ -93,7 +93,7 @@
 					<artifactId>spring-cloud-netflix-ribbon</artifactId>
 				</exclusion>
 				<!-- Exclude Jersey Communication --> 				
-		        <exclusion>
+		        <!--<exclusion>
 		            <groupId>com.sun.jersey</groupId>
 		            <artifactId>jersey-client</artifactId>
 		        </exclusion>
@@ -104,7 +104,7 @@
 		        <exclusion>
 		            <groupId>com.sun.jersey.contribs</groupId>
 		            <artifactId>jersey-apache-client4</artifactId>
-		        </exclusion>
+		        </exclusion>-->
 			</exclusions>
 		</dependency>
 		<!-- Config Client -->
@@ -131,18 +131,6 @@
 			<groupId>org.startupframework</groupId>
 			<artifactId>startup-starter-core</artifactId>
 			<version>1.0.2.RELEASE</version>
-		</dependency>
-		<!-- Mapping Entity -> DTO -->
-		<dependency>
-			<groupId>org.mapstruct</groupId>
-			<artifactId>mapstruct</artifactId>
-			<version>${org.mapstruct.version}</version>
-		</dependency>
-		<!-- Getters y Setters -->
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<scope>provided</scope>
 		</dependency>
 		<!-- Testing -->
 		<dependency>
